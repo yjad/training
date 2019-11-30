@@ -1,5 +1,6 @@
 #! DB Handling
 import  logging
+#logging.basicConfig(level=logging.DEBUG)
 
 ERROR_OPENING_DB = -1
 ERROR_READINGS_RECS = -2
@@ -9,7 +10,30 @@ import sqlite3
 from sqlite3 import Error
 
 DB_FILE_NAME = r".\Books\main.sqlite"
-def get_categories_db(cmd):
+def exec_db_cmd(cmd):
+    try:
+        conn = sqlite3.connect(DB_FILE_NAME)
+    except Error as e:
+        print(f'error opening database: {e}')
+        return None, ERROR_OPENING_DB
+    try:
+        rs = conn.execute(cmd)
+    except Error as e:
+        print ('error reading record: ', e)
+        conn.close()
+        return None, ERROR_READINGS_RECS
+
+    rec_list = rs.fetchall()
+
+    try:
+        conn.close()
+    except Error as e:
+        logging.debug (f'Error closing conn/cursor: {e}')
+        return None, ERROR_CLOSING_CONN
+    logging.debug(f"no of rows: {len(rec_list)}")
+    return rec_list
+
+def categories_db(cmd):
 
     logging.debug(cmd)
     try:
@@ -35,33 +59,10 @@ def get_categories_db(cmd):
     logging.debug(f"no of rows: {len(categ_list)}")
     return categ_list
 
+def books_db(cmd):
 
-def add_todo_db_record(rec):
-    sql = 'INSERT INTO todo (title, desc, status) VALUES(?,?,?)'
+    return exec_db_cmd(cmd)
 
-    try:
-        conn = sqlite3.connect(DB_FILE_NAME)
-    except Error as e:
-        print(f'error opening database: {e}')
-        conn.close()
-        return None, -1
-
-    cur = conn.cursor()
-    try:
-        tasks = cur.execute(sql, rec)
-    except Error as e:
-        print ('error inserting record: ', e)
-        conn.close()
-        return -4
-
-    inserted_rec_id = cur.lastrowid
-    try:
-        conn.commit()
-        conn.close()
-    except Error as e:
-        print ('Error closing conn/cursor: ', e)
-        return -5
-    return inserted_rec_id
 
 def update_todo_db_record(rec):
 
