@@ -1,9 +1,8 @@
 from re import findall
-from openpyxl import Workbook, load_workbook, cell
+from openpyxl import Workbook, load_workbook
 from tkinter import Tk, Label, Button, Entry, IntVar, END, W, E, NE, StringVar, DoubleVar, WORD
 from tkinter import filedialog
 from tkinter.scrolledtext import ScrolledText
-import csv
 
 
 
@@ -76,7 +75,7 @@ class ValidateUploadSheet:
     def validate_small_int_field(self, row, col):
         field_value = self.ws.cell(row, col).value
         if field_value > 255:
-            self.disp_line_error(row, col, 'Int field cannot be more than 255 char')
+            self.disp_line_error(row, col, 'Int field cannot be more than 255')
             return False
         else:
             return True
@@ -89,7 +88,7 @@ class ValidateUploadSheet:
         if 'float' in field_type:
             self.disp_line_error(row, col, 'field must be integer')
         elif 'int' in field_type:
-            if field_value >= 1000 and field_format != 'General':
+            if field_value >= 1000 and field_format is not None:
                 self.disp_line_error(row,  col, 'number & if formatted may contain comma')
             else:
                 pass
@@ -98,119 +97,13 @@ class ValidateUploadSheet:
             self.validate_str_field(row, col)
 
     def validate_str_field(self, row, col):
-        mycell = self.ws.cell(row, col)
-        field_value = mycell.value
+        acell = self.ws.cell(row, col)
+        if acell.data_type == Cell.TYPE_STRING:
+        field_value = self.ws.cell(row, col).value
         # check if the field is not string
-        if mycell.data_type == cell.cell.TYPE_NUMERIC:
-            self.validate_int_field(row,col)
-        elif self.valid_str(field_value):
-            self.disp_line_error(row, col, 'field includes newLine or comma')
-            return False
-        else:
-            return True
-
-    def validate_float(self, row, col, num_of_decimals):
-        field_value = self.ws.cell(row, col).value
-        if 'float' not in str(type(field_value)):
-            self.disp_line_error(row, col, 'field should be decimal')
-        # check number of decimals:
-        x = str(field_value)
-        if x[::-1].find('.') > num_of_decimals:
-            self.disp_line_error(row, col, f'field has more than {num_of_decimals} decimal places')
-            return False
-        else:
-            return True
-class ValidateUploadCSV:
-    ws = None
-    wb = None
-    max_row = 65000
-    header = []
-    fp = None
-    output_win = None
-
-    def __init__(self, csv_file_path):
-        csv_file = open(csv_file_path, mode='r', newline="\n", encoding='utf-8')
-        csv_reader = csv.reader(csv_file, delimiter='|', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-        # read header
-        #csv_writer.writerow(['Quote', 'author', 'tag-1', 'tag-2', 'tag-3', 'tag-4', 'tag-5'])
-
-        # self.wb = load_workbook(file_path)
-        # if self.wb is None:
-        #     self.disp_general_error(f'Error opening the file: {file_path}')
-        # ws = wb.active
-        # sheet_name = self.wb.sheetnames[0]
-        # self.ws = self.wb[sheet_name]
-
-        # if self.ws is None:
-        #     self.disp_general_error(f'Error accessing sheet: {sheet_name}')
-
-        try:
-            self.fp = open(csv_file_path + '.txt', 'w+', encoding='utf-8')
-        except:
-            self.disp_general_error(f'Error creating o/p file: {csv_file_path}')
-
-
-    def valid_str(self, in_str: str):
-        if in_str.count('\n') > 0:
-            return -1  # not valid, includes /r/n
-        elif in_str.count(',') > 0:
-            return -2  # not valid, includes comma
-        else:
-            return 0
-
-    def disp_general_error(self, error_msg):
-        msg  = f'Error: {error_msg}'
-        #print(msg)
-        self.fp.write(msg)
-        self.output_win.insert(END, msg+'\n')
-
-    def disp_info(self, in_msg):
-        msg = 'Info: ' + in_msg
-        #print(msg)
-        self.fp.write(f'Error: {msg}\n')
-        self.output_win.insert(END, msg+'\n')
-
-    #def disp_line_error(self, cell_row, field_name, field_value, opt_text=None):
-    def disp_line_error(self, cell_row, cell_col, opt_text=None):
-        field_name = self.header[cell_col-1]        # col in excel starts from 1
-        field_value = self.ws.cell(row=cell_row,column=cell_col).value
-        if opt_text is None:
-            error_msg = f'Row {cell_row}: Invalid field: {field_name}: {field_value}'
-        else:
-            error_msg = f'Row {cell_row}: Invalid field: {field_name}: {field_value} --> {opt_text}'
-        self.disp_general_error(error_msg)
-
-    def validate_small_int_field(self, row, col):
-        field_value = self.ws.cell(row, col).value
-        if field_value > 255:
-            self.disp_line_error(row, col, 'Int field cannot be more than 255 char')
-            return False
-        else:
-            return True
-
-    # area is big integer but should not include thousand seperator
-    def validate_int_field(self, row, col):
-        field_value = self.ws.cell(row, col).value
-        field_format = self.ws.cell(row, col).number_format
-        field_type = str(type(field_value))
-        if 'float' in field_type:
-            self.disp_line_error(row, col, 'field must be integer')
-        elif 'int' in field_type:
-            if field_value >= 1000 and field_format != 'General':
-                self.disp_line_error(row,  col, 'number & if formatted may contain comma')
-            else:
-                pass
-        else :  # field is string
-            #print ('field_type: ', field_type)
-            self.validate_str_field(row, col)
-
-    def validate_str_field(self, row, col):
-        mycell = self.ws.cell(row, col)
-        field_value = mycell.value
-        # check if the field is not string
-        if mycell.data_type == cell.cell.TYPE_NUMERIC:
-            self.validate_int_field(row,col)
-        elif self.valid_str(field_value):
+        if type(field_value) == int:
+            field_value = str(field_value)
+        if self.valid_str(field_value):
             self.disp_line_error(row, col, 'field includes newLine or comma')
             return False
         else:
@@ -237,6 +130,7 @@ class ValidateLandSheet(ValidateUploadSheet):
     ]
 
     def check_file_header(self):
+
         for i in range (1, self.sheet_no_of_columns):
             if self.ws.cell(row=1, column=i).value != self.header[i-1]:
                 self.disp_general_error (f'Invalid Header, column: {self.ws.cell.value}' )
@@ -279,12 +173,8 @@ class ValidateLandSheet(ValidateUploadSheet):
             if self.ws.cell(row=cell_row, column=13).value != 1:
                 self.disp_line_error(cell_row, 13, 'no of lands should be 1')
 
-            x= self.ws.cell(row=cell_row, column=self.sheet_no_of_columns+110)
-            print (x.value, " date_type: ", x.data_type, x)
-
-            #print (f'type: {type(x)}, format: {x.string}')
-            if self.ws.cell(row=cell_row, column=self.sheet_no_of_columns+1).value != None:
-                self.disp_general_error(f'Row {cell_row} sheet should be {self.sheet_no_of_columns} column, there are other columns in the sheet')
+            # if self.ws.cell(row=cell_row, column=self.sheet_no_of_columns+1).value != "":
+            #     self.disp_general_error(f'Row {cell_row} sheet should be {self.sheet_no_of_columns} column, there are other columns in the sheet')
 
             cell_row += 1
             if cell_row > self.max_row:

@@ -1,0 +1,112 @@
+I realize this is an old question, but I just started working with Tkinter yesterday to develop a Hebrew application in Python. Right-to-left (bidi) is not available as part of the framework, but after a bit of Googling and some research, I managed to convincingly fake it through keybindings and forcibly repositioning the cursor. My Entry widget keeps the justification left, so that the Hebrew text is in roughly the same position as some English on the same box, but this approach could be easily modified for a right-justified box. (Or, right-justification might make this simpler). Nonetheless, here's what I did.
+
+Essentially what you're doing here is manually enforcing cursor position using callbacks, character codes, and index constants. Also, you must account for the arrow keys (mine behave as moving in the direction which they point. I've always hated how RTL usually reverses the arrows. This is easily changed, though, if you prefer otherwise.) Backspace and Del, also, have to cause some manual repositioning. Of course, too, if you're keeping track of the cursor manually, you have to update your tracking variable in the event that the user repositions it using the mouse. Below is my code, with the exception that the use of a global here is intended to remove a mite of complexity from the explanation.
+
+             # Here, the necessary bindings.  We're going to 
+             # have to make modifications on key press, release,
+             # and on a completed mouse click.
+             entryWidget.bind("<KeyPress>", rtlPress)
+             entryWidget.bind("<KeyRelease>", rtlRelease)
+             entryWidget.bind("<ButtonRelease>", rtlMouse)
+Next, the three callback functions, which do all of our cursor tracking and relocating.
+
+#With the following functions, keep in mind that we only want the cursor to move RIGHT
+#(increase in index) in response to a right arrow press or a DEL.  Essentially, we are
+#compensating for any movement but these explicit conditions.  Since the indexing of the 
+#cursor position is LTR, holding it in its current position 
+#while we append more text is 
+#tantamount to moving it right.
+
+#On key release, if an arrow key has been invoked, we update our tracking variable to 
+#reflect the new cursor position.  If any other key was pressed, we snap the cursor back 
+#to where it was prior to the keypress to prevent it from moving right and cause the
+#next letter to be appended on the left side of the previous letter.
+
+def rtlRelease(event):
+        global hebCursorPos
+        if event.keycode==114 or event.keycode==113:
+               hebCursorPos=event.widget.index(INSERT)
+        else:
+               event.widget.icursor(hebCursorPos)
+        print(str(event.keycode)+" "+str(hebCursorPos))
+
+#On keypress, we must compensate for the natural LTR behavior of backspace(22) and
+#del(119)
+
+def rtlPress(event):
+        global hebCursorPos
+        #In LTR text entry, a backspace naturally removes the character to the left of
+        #the cursor.
+        if event.keycode==22:
+               length =  len(event.widget.get())
+               #In RTL, the right edge is the beginning of the string, so backspace
+               #should do nothing.
+               #If we're at the right edge of the string, we insert a meaningless
+               #character to be deleted so that it appears to the user as if we have 
+               #done nothing.
+    if hebCursorPos==length:
+                       event.widget.insert(hebCursorPos, " ")
+               #In order to cause the backspace to delete the character to the right
+               #rather than the left of the cursor from the user's perspective, we step 
+               #the cursor forward one.  This will cause the backspace to delete the 
+               #character to the left of the new cursor position, which will be the
+               #character that was to the right of the cursor from the user's 
+               #perspective.  If we were at the right end of the line, we insert a space 
+               #and delete it milliseconds later.  We do not need to update the cursor's 
+               #position, in the tracking variable, because after the character is 
+               #deleted, it is back at the index from which it started, counting index
+               #from an LTR perspective.
+               event.widget.icursor(hebCursorPos+1)
+        else:
+               #Del is more of the same.  It deletes the character to the right of the
+               #cursor, but we want it to delete the character to the right.
+               if event.keycode==119:
+               #If we're at the left edge of the string, insert a meaningless character
+               #for the del to delete, so that from the user's perspective it does 
+               #nothing.
+                        if hebCursorPos==0:
+                               event.widget.insert(hebCursorPos, " ")
+                        #Otherwise, we will be stepping the cursor one to the left, so 
+                        #that when it deletes the character to its new right, it will be 
+                        #deleting the character from what the user thinks is its left.  
+                        #Because we are deleting a character from the left of the cursor 
+                        #from the user's perspective, there will be fewer characters to 
+                        #the left of the cursor once the operation is complete.  As 
+                        #cursor positioning is tracked as an LTR index, we must update
+                        #our tracking variable.
+                        else:
+                                hebCursorPos-=1
+                #Now, we snap our cursor to the position of our tracking variable.  
+                #Either we are preventing it from drifting right due to overlapping 
+                #keypresses, or we are repositioning it to maintain the correct index 
+                #after a del.
+                event.widget.icursor(hebCursorPos)
+
+#Simply put, if the user repositions the cursor with the mouse, track it.
+def rtlMouse(event):
+         global hebCursorPos
+         hebCursorPos=event.widget.index(INSERT)
+Hope this helps! Since it is accomplished by forced cursor motion, there is slight visual cursor jitter during typing, but text ordering appears to be correct, and the cursor seems to always indicate the correct position when the user is not mid-keypress. I'm not making any claims of code perfection, though!
+
+localization, Using Tkinter for RTL (right-to-left) languages like Arabic/Hebrew? - tkinter yesterday develop hebrew application in python. right-to-left  Stack Overflow for Teams is a private, secure spot for you and your coworkers to find and share information. Learn more Right to left text in tkinter
+
+this maybe doesn't solve the whole problem either, but it may solve the problem of display which i see the main problem.
+
+basically you will need two things to reverse character order and to let them join together i used this reshaper , it worked fine with simple words without diacritics الحركات but it still buggy at some cases.
+
+(Right to Left (The Mirror World : Spotify Engineering, One of the languages spoken in these regions is Arabic. RTL: Right To Left — text that reads from right to left, like Arabic text. the default value. rtl – Used for languages that are written from right to left (e.g. Arabic, Hebrew,  I searched a bit and it is a known issue that tk/tcl uses Windows bidi support since about 2011, but their is apparently nothing equivalent on linux. Example: https://wiki.tcl.tk/3158. One answer to Python/Tkinter: Using Tkinter for RTL (right-to-left) languages like Arabic/Hebrew? has some workarounds for *nix. I am not sure about Mac support
+
+Try setting the of entry or other element to "jameel noori nastaleeq" or any other urdu font
+
+Arabic text entry issue in tkinter, I tried using the libraries suggested here: python - Tkinter Label with arabic text - Stack Overflow Arabic is written from right to left (RTL), and when it's mixed with English or other LTR languages (becoming So i don't know whether the issue is from linux itself or from interpreters such as python and .net. You could also not provide the language global RTL flag but then the strings would be left-aligned (but still rendered correctly) which doesn't look so nice in RTL languages. If I may suggest two paths for a better solution: 1. Research the system renderer functions 2. Use one of the libraries to handle proper character fusion.
+
+Internationalizing Python, This paper discusses approaches to internationalization in Python and presents a Whereas European languages write from left to right, Arabic and Hebrew are simplifies this procedure. In the end, a possible line could look like. l = Tkinter. Some languages adopted to this requirement, so languages that would traditionally displayed vertically (e.g. Chinese) are presented horizontally on a computer. Even for horizontal text, there are still languages that differ in the writing direction. Whereas European languages write from left to right, Arabic and Hebrew are typed from right to left.
+
+Right-to-left mark, Example of use in HTML[edit]. Suppose the writer wishes to inject a run of Arabic or Hebrew (i.e. right-to-left) text into an English paragraph,  As with any interesting question, the answer is “It depends”. Disclaimer, I’m a long time user and core developer the kivy framework, I might be biased. I’m much less experienced with TkInter, which i only developed a small Tetris clone with, year
+
+MPMoviePlayerController, I eventually got this sorted by subscribing to MPMoviePlayerPlaybackDidFinishNotification and watching MPMovieFinishReasonPlaybackError. More details  آیا راهی وجود داره که در لینوکس با tkinter gui فارسی طراحی کرد؟ مثلا اگر entry ایجاد می شه حروف فارسی برعکس و جدا از هم تایپ می شن. ظاهرا tkinter با زبانهای rtl مشکل داره. درسته؟
+
+Comments
+some more on this at: wiki.tcl.tk/699
+Since about 2011, tk and hence tkinter and IDLE support bidi Hebrew and Arabic on Windows using support from Windows. wiki.tcl.tk/3158. I just added some of each to the font selection sample on IDLE so people can see what works or not on their particular system.
+This is a horrible hack, and only tackles a fraction of the problems presented by Arabic/Hebrew text rendering.
