@@ -46,7 +46,6 @@ class ValidateUploadUtils:
             self.disp_general_error(f'Error creating o/p file: {file_path}')
 
 
-
     def valid_str(self, in_str: str):
         if in_str.count('\n') > 0:
             return -1  # not valid, includes /r/n
@@ -79,7 +78,6 @@ class ValidateUploadUtils:
 
     def validate_small_int_field(self, row, col):
         field_value = self.ws.cell(row, col).value
-
         if field_value > 255:
             self.disp_line_error(row, col, 'Int field cannot be more than 255 char')
             return False
@@ -174,6 +172,7 @@ class ValidateUploadCSVUtils (ValidateUploadUtils):
             return a == b
 
     def field_value(self, col):
+        #print (col)
         f = self.ws[col]
         if self.isint(f):
             return int()
@@ -265,7 +264,6 @@ class ValidateLandSheet(ValidateUploadUtils):
             if self.ws.cell(row=1, column=i).value != self.header[i-1]:
                 self.disp_general_error (f'Invalid Header, column: {self.ws.cell(row=1, column=i).value}' )
 
-
     def check_rows(self):
         cell_row = 2
         while True:
@@ -305,6 +303,7 @@ class ValidateLandSheet(ValidateUploadUtils):
                 self.disp_line_error(cell_row, 13, 'no of lands should be 1')
 
             x= self.ws.cell(row=cell_row, column=self.sheet_no_of_columns+110)
+            #print (x.value, " date_type: ", x.data_type, x)
 
             #print (f'type: {type(x)}, format: {x.string}')
             if self.ws.cell(row=cell_row, column=self.sheet_no_of_columns+1).value != None:

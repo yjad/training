@@ -1,0 +1,318 @@
+<!DOCTYPE HTML>
+<html lang="ar" dir="rtl">
+
+<head>
+<title>نظام حجز الوحدات السكنية</title>
+<head>
+<meta charset="UTF-8">
+<title>نظام حجز الوحدات السكنية</title>
+
+<script src="/cdn-cgi/apps/head/qrkq7TZDviJ3pnB7qqZ2P_CbP2w.js"></script><link rel="apple-touch-icon" sizes="180x180" href="/hdb/static/favicon/apple-touch-icon.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="/hdb/static/favicon/favicon-32x32.png" />
+<link rel="icon" type="image/png" sizes="16x16" href="/hdb/static/favicon/favicon-16x16.png" />
+<link rel="manifest" href="/hdb/static/favicon/manifest.json" />
+<link rel="mask-icon" href="/hdb/static/favicon/safari-pinned-tab.svg" color="#5bbad5" />
+<link rel="shortcut icon" href="/hdb/static/favicon/favicon.ico" />
+<meta name="msapplication-config" content="/hdb/static/favicon/browserconfig.xml" />
+<meta name="theme-color" content="#ffffff" />
+
+<meta name="viewport" content="width=device-width, maximum-scale=1, initial-scale=1, user-scalable=0" />
+<!--[if IE]>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'><![endif]-->
+
+<link href="https://fonts.googleapis.com/css?family=Cairo:300,400,600%7CRaleway:300,400,500,600,700%7CLato:300,400,400italic,600,700" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+
+
+
+
+
+
+<link href="/hdb/static/assets/css/essentials.min.css" rel="stylesheet" type="text/css" />
+<link href="/hdb/static/assets/css/layout.min.css" rel="stylesheet" type="text/css" />
+<link href="/hdb/static/assets/css/color_scheme/green.min.css" rel="stylesheet" type="text/css" id="color_scheme" />
+
+<link href="/hdb/static/assets/plugins/bootstrap/RTL/bootstrap-rtl-merged.min.css" rel="stylesheet" type="text/css" />
+<link href="/hdb/static/assets/css/layout-RTL.min.css" rel="stylesheet" type="text/css" />
+
+<link href="/hdb/static/assets/css/header-1.css" rel="stylesheet" type="text/css" />
+<link href="/hdb/static/css/custom.css" rel="stylesheet" type="text/css" />
+</head>
+</head>
+<body class="smoothscroll enable-animation" dir="rtl">
+<div>
+<div id="wrapper">
+<div id="header" class="navbar-toggleable-md sticky clearfix">
+
+
+<header id="topNav">
+<div class="container">
+
+<button class="btn btn-mobile" data-toggle="collapse" data-target=".nav-main-collapse">
+<i class="fa fa-bars"></i>
+</button>
+
+<ul class="float-right nav nav-pills nav-second-main">
+ </ul>
+
+
+<a class="logo float-left col-lg-5 col-md-6 col-sm-4 col-xs-9" href="http://web.hdb-egy.com/index.php/ar">
+<img class="img-fluid" src="/hdb/static/images/logo.png" alt="" /> 
+<img class="img-fluid" src="/hdb/static/images/logo.png" alt="" /> 
+</a>
+<a class="logo float-right col-lg-5 col-md-6 col-sm-4 col-xs-9" href="http://www.newcities.gov.eg/housing-units/default.aspx">
+<img class="img-fluid" src="/hdb/static/images/UrbanCommunitiesAuthority.png" alt="" style="float: left;" /> 
+<img class="img-fluid" src="/hdb/static/images/UrbanCommunitiesAuthority.png" alt="" style="float: left;" /> 
+</a>
+
+<div class="navbar-collapse collapse float-left nav-main-collapse submenu-dark">
+<nav class="nav-main">
+<ul id="topMain" class="nav nav-pills nav-main">
+<li class="active">
+
+<a class="fs-15" href="/hdb/">الرئيسية</a>
+</li>
+<li class="active">
+<a class="fs-15" href="/hdb/#projects">المشاريع</a>
+</li>
+<li class="active">
+<a href="/hdb/faq" class="fs-15">الأسئلة الشائعة</a>
+</li>
+<li class="active">
+<a href="/hdb/about" class="fs-15">عن الموقع</a>
+</li>
+
+
+<li class="active">
+<a href="/hdb/register" class="fs-15">تسجيل مستخدم جديد</a>
+</li>
+<li class="active">
+<a href="/hdb/login" class="fs-15">دخول مستخدم حالي</a>
+</li>
+</ul>
+</nav>
+</div>
+
+</div>
+</header>
+
+</div>
+</div>
+</div>
+<div id="wrapper">
+<section class="page-header page-header-xlg b-0 dark" data-background-delay="5000" data-background-fade="1000" data-background="/hdb/static/images/homegal-1.jpg" style="position: relative; z-index: 0; background-image: none;">
+<span class="overlay dark-4"></span>
+<div class="container">
+<h2 class="fs-40 fw-300 mb-1">مرحبا بكم في موقع بنك التعمير والاسكان</h2>
+<h2 class="fs-40 fw-300 mb-1">لحجز الوحدات والاراضي المملوكة لهيئة</h2>
+<h2 class="fs-40 fw-300 mb-1">المجتمعات العمرانية الجديدة</h2>
+
+</div>
+<div class="backstretch" style="left: 0px; top: 0px; overflow: hidden; margin: 0px; padding: 0px; height: 100%; width: 100%; z-index: -999998; position: absolute;">
+<div class="backstretch-item" style="position: absolute; margin: 0px; padding: 0px; border: none; width: 100%; height: 100%; z-index: -999999;">
+<img alt="" src="/hdb/static/images/homegal-1.jpg" style="position: absolute; margin: 0px; padding: 0px; border: none; width: 1349px; height: 899.108px; max-width: none; left: 0px; top: -261.554px; right: auto; bottom: auto;">
+</div>
+</div>
+</section>
+<section class="page-header page-header-xs">
+<div class="container">
+<h1>المشاريع المتاحة</h1>
+</div>
+</section>
+<section id="projects">
+<div class="container">
+<div class="portfolio-gutter" href="displayProjects">
+<ul class="nav nav-pills mb-60">
+<li class="active"><a href="/hdb/#projects">كل المشاريع</a></li>
+<li><a href="/hdb/?type=1#projects">وحدات سكنية</a></li>
+<li><a href="/hdb/?type=2#projects">أراضي</a></li>
+ </ul>
+</div>
+<div id="projectsDiv" class="mix-grid">
+<div>
+<br>
+<div class="row mix">
+<div class="col-md-7">
+<div class="item-box">
+<figure>
+<span class="item-hover">
+<span class="overlay dark-5"></span>
+<span class="inner">
+
+
+
+
+
+
+
+
+
+</span>
+</span>
+
+
+<div class="owl-carousel buttons-autohide controlls-over m-0" data-plugin-options='{"singleItem": true, "autoPlay": 4000, "navigation": false, "pagination": true, "transitionStyle":"fadeUp"}'>
+<div>
+<img class="img-fluid" src="/hdb/project/19/image/1/res/600x400" width="800" height="533" alt="" />
+</div>
+</div>
+
+</figure>
+</div>
+</div>
+<div class="col-md-5">
+<h2>
+<a href="/hdb/project/19/details">جنة - ملوي الجديدة</a>
+</h2>
+<a href="/hdb/displayProjects?type=1#projects">وحدات سكنية</a>
+<div class="mt-30">
+<p>وحدات كاملة التشطيب بمشروع جنه السكنى بعدد (512) وحدة سكنية بمدينة (ملوى الجديدة) بمساحات تتراوح من 100م2 إلي 161م2 تتوافر به المسطحات الخضراء والانشطة الترفهية والتجارية ليواكب المشروعات المميزه بالمدن والمجتمعات العمرانية الجديدة ومحاط بسور لتحقيق الخصوصية .</p>
+<ul class="portfolio-detail-list list-unstyled m-0">
+
+<li>
+<i class="fa fa-calendar"></i>
+<span>تاريخ فتح باب التقدم:</span>
+<span>25 أغسطس 2019</span>
+</li>
+ <li>
+<i class="fa fa-calendar"></i>
+<span>تاريخ نهاية الحجز :</span>
+<span>19 سبتمبر 2019</span>
+</li>
+
+</ul>
+<br>
+<a href="/hdb/project/19/bidReq" class="btn btn-teal btn-lg fs-17" target="_bidReq"> كراسة الشروط</a>
+<a style="margin-right: 20px;" href="/hdb/project/19/details" class="btn btn-primary btn-lg fs-17">أرغب في التقدم</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<div class="alert alert-transparent bordered-bottom m-0">
+<div class="container">
+<div class="row">
+<div class="col-md-9 col-sm-12">
+<h3>للمزيد من المعلومات،<a href="https://youtu.be/Zcg96oEFGfM" target="_blank" class="text-blue">شاهد الفيديو التوضيحي</a> أو إتصل بنا على <span><b><a href="tel:19995" class="text-green ">19995</a></b></span>
+وسوف نقوم بالرد عليكم</h3>
+<h4>بنك التعمير والإسكان....بنك كبير والأول في التعمير</h4>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div>
+
+<footer id="footer">
+<div class="copyright">
+<div class="container">
+<ul class="float-right m-0 list-inline mobile-block">
+<li><a href="/hdb/about/#termscond">الشروط والأحكام</a></li>
+<li>&bull;</li>
+<li><a href="/hdb/about/#privacy">الخصوصية</a></li>
+</ul>
+
+<div>© 2018 جميع الحقوق محفوظة لبنك التعمير والإسكان</div>
+
+</div>
+</div>
+</footer>
+
+<a href="#" id="toTop"></a>
+
+<div id="preloader">
+<div class="inner">
+<span class="loader"></span>
+</div>
+</div>
+
+
+<script type="text/javascript">
+        var plugin_path ="\/hdb\/static\/assets\/plugins\/";
+    </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js" integrity="sha384-xBuQ/xzmlsLoJpyjoggmTEz8OWUFM0/RC5BsqQBDX2v5cMvDHcMakNTNrHIW2I5f" crossorigin="anonymous"></script>
+
+<script type="text/javascript" src="/hdb/static/assets/js/scripts.min.js" />
+
+    <!-- REVOLUTION SLIDER -->
+    <script type="text/javascript"
+            src="/hdb/static/assets/plugins/slider.revolution/js/jquery.themepunch.tools.min.js"/>
+    <script type="text/javascript"
+            src="/hdb/static/assets/plugins/slider.revolution/js/jquery.themepunch.revolution.min.js"/>
+    <!--<script type="text/javascript" th:src="@{/static/assets/js/view/demo.revolution_slider.js}" src="/static/assets/js/view/demo.revolution_slider.min.js"></script>-->
+
+    <script>
+        (function (a) {
+            if (typeof define === "function" && define.amd && define.amd.jQuery) {
+                define(["jquery"], a)
+            } else {
+                a(jQuery)
+            }
+        }(function (e) {
+            var a = /\+/g;
+
+            function d(g) {
+                return g
+            }
+
+            function b(g) {
+                return decodeURIComponent(g.replace(a, " "))
+            }
+
+            function f(g) {
+                if (g.indexOf('"') === 0) {
+                    g = g.slice(1, -1).replace(/\\"/g, '"').replace(/\\\\/g, "\\")
+                }
+                try {
+                    return c.json ? JSON.parse(g) : g
+                } catch (h) {
+                }
+            }
+
+            var c = e.cookie = function (p, o, u) {
+                if (o !== undefined) {
+                    u = e.extend({}, c.defaults, u);
+                    if (typeof u.expires === "number") {
+                        var q = u.expires, s = u.expires = new Date();
+                        s.setDate(s.getDate() + q)
+                    }
+                    o = c.json ? JSON.stringify(o) : String(o);
+                    return (document.cookie = [encodeURIComponent(p), "=", c.raw ? o : encodeURIComponent(o), u.expires ? "; expires=" + u.expires.toUTCString() : "", u.path ? "; path=" + u.path : "", u.domain ? "; domain=" + u.domain : "", u.secure ? "; secure" : ""].join(""))
+                }
+                var g = c.raw ? d : b;
+                var r = document.cookie.split("; ");
+                var v = p ? undefined : {};
+                for (var n = 0, k = r.length; n < k; n++) {
+                    var m = r[n].split("=");
+                    var h = g(m.shift());
+                    var j = g(m.join("="));
+                    if (p && p === h) {
+                        v = f(j);
+                        break
+                    }
+                    if (!p) {
+                        v[h] = f(j)
+                    }
+                }
+                return v
+            };
+            c.defaults = {};
+            e.removeCookie = function (h, g) {
+                if (e.cookie(h) !== undefined) {
+                    e.cookie(h, "", e.extend(g, {expires: -1}));
+                    return true
+                }
+                return false
+            }
+        }));
+
+    </script>
+</div>
+</body>
+</html>

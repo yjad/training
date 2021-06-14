@@ -5,10 +5,10 @@ from tkinter import filedialog
 from tkinter.scrolledtext import ScrolledText
 import csv
 
-TYPE_NUMERIC = 'n'
-TYPE_STRING = 's'
-TYPE_FLOAT = 'f'
-TYPE_INT = 'i'
+EXCEL = 'xlsx'
+CSV = 'csv'
+NUMERIC_TYPE = 'n'
+STRING_TYPE= 's'
 
 def get_file_path(initialDir=".", DialogTitle="select File", fileTypeText="all Files", fileType="*.*"):
     #root = Tk()
@@ -21,38 +21,78 @@ def get_file_path(initialDir=".", DialogTitle="select File", fileTypeText="all F
     return file_path
 
 
-class ValidateUploadUtils:
+class UploadSheetUtils:
     ws = None
     wb = None
+    csv_file = None
+    csv_reader = None
     max_row = 65000
     header = []
     fp = None
     output_win = None
+    file_type = None
+    curr_row_no = 0
+    curr_row=[]
 
     def __init__(self, file_path):
-        self.wb = load_workbook(file_path)
-        if self.wb is None:
-            self.disp_general_error(f'Error opening the file: {file_path}')
-        # ws = wb.active
-        sheet_name = self.wb.sheetnames[0]
-        self.ws = self.wb[sheet_name]
+        if file_path.split('.')[-1] == 'xlsx'.lower():
+            self.file_type = EXCEL
+            self.wb = load_workbook(file_path)
+            if self.wb is None:
+                self.disp_general_error(f'Error opening the file: {file_path}')
+            # ws = wb.active
+            sheet_name = self.wb.sheetnames[0]
+            self.ws = self.wb[sheet_name]
+            if self.ws is None:
+                self.disp_general_error(f'Error accessing sheet: {sheet_name}')
+        else:
+            self.file_type = CSV
+            try:
+                self.csv_file = open(file_path, mode='r', newline="\n", encoding='utf-8')
+            except:
+                self.disp_general_error(f'Error opening file: {file_path}')
 
-        if self.ws is None:
-            self.disp_general_error(f'Error accessing sheet: {sheet_name}')
+            self.ws = csv.reader(self.csv_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+            if self.ws is None:
+                self.disp_general_error(f'reading csv file: {file_path}')
 
+        # Open O/p file
         try:
             self.fp = open(file_path + '.txt', 'w+', encoding='utf-8')
         except:
             self.disp_general_error(f'Error creating o/p file: {file_path}')
 
+    def cell_value(self, row, col):
+        if self.file_type == CSV:
+            if row != self.curr_row_no:
+                self.curr_row_no = row
+                try:
+                    self.curr_row = next(self.ws)
+                except StopIteration: # end
+                    return None
+            #print (f'row: {row}, col: {col}, val: {self.curr_row[col - 1]}')
+            return self.curr_row[col - 1].strip()
+        else:   # excel
+            return self.ws.cell(row=row, column= col).value
 
-    def valid_str(self, in_str: str):
-        if in_str.count('\n') > 0:
-            return -1  # not valid, includes /r/n
-        elif in_str.count(',') > 0:
-            return -2  # not valid, includes comma
+    def cell_type(self, row, col):
+        if self.file_type == CSV:
+            try:
+                f:float = float()
+                return NUMERIC_TYPE
+            except:
+                return STRING_TYPE
         else:
-            return 0
+            return self.ws.cell(row=row, column= col).data_type
+
+    def cell_format(self, row, col):
+        if self.file_type == CSV:
+            return None
+        else:
+            if self.ws.cell(row,col).number_format == 'General':
+                return None
+            else:
+                return self.ws.cell(row=row, column= col).number_format
 
     def disp_general_error(self, error_msg):
         msg  = f'Error: {error_msg}'
@@ -66,55 +106,65 @@ class ValidateUploadUtils:
         self.fp.write(f'Error: {msg}\n')
         self.output_win.insert(END, msg+'\n')
 
-    #def disp_line_error(self, cell_row, field_name, field_value, opt_text=None):
     def disp_line_error(self, cell_row, cell_col, opt_text=None):
         field_name = self.header[cell_col-1]        # col in excel starts from 1
-        field_value = self.ws.cell(row=cell_row,column=cell_col).value
+        field_value = self.cell_value (cell_row, cell_col)
         if opt_text is None:
             error_msg = f'Row {cell_row}: Invalid field: {field_name}: {field_value}'
         else:
             error_msg = f'Row {cell_row}: Invalid field: {field_name}: {field_value} --> {opt_text}'
         self.disp_general_error(error_msg)
 
-    def validate_small_int_field(self, row, col):
-        field_value = self.ws.cell(row, col).value
-        if field_value > 255:
-            self.disp_line_error(row, col, 'Int field cannot be more than 255 char')
-            return False
-        else:
-            return True
+    # def validate_small_int_field(self, row, col):
+    #     field_value = self.cell_value(row, col)
+    #     if field_value > 255:
+    #         self.disp_line_error(row, col, 'Int field cannot be more than 255')
+    #         return False
+    #     else:
+    #         return True
 
     # area is big integer but should not include thousand seperator
-    def validate_int_field(self, row, col):
-        field_value = self.ws.cell(row, col).value
-        field_format = self.ws.cell(row, col).number_format
-        field_type = str(type(field_value))
-        if 'float' in field_type:
+    def validate_numeric_field(self, row, col, max_number=None):
+        f = self.cell_value(row, col)
+        field_value = self.cell_value(row, col)
+        field_format = self.cell_format(row, col)
+        field_type = self.cell_type(row, col)
+        print (field_type)
+        if field_type == STRING_TYPE:
             self.disp_line_error(row, col, 'field must be integer')
-        elif 'int' in field_type:
-            if field_value >= 1000 and field_format != 'General':
+            return False
+        elif field_type != NUMERIC_TYPE:
+            self.disp_line_error(row, col, 'field must be integer')
+            return False
+        if max_number is not None:
+            if int(field_value) > max_number:
+                self.disp_line_error(row, col, f'Int field cannot be more than {max_number}')
+                return False
+            elif int(field_value) >= 1000 and field_format is not None:
                 self.disp_line_error(row,  col, 'number & if formatted may contain comma')
+                return False
             else:
-                pass
-        else :  # field is string
-            #print ('field_type: ', field_type)
-            self.validate_str_field(row, col)
+                return True
 
     def validate_str_field(self, row, col):
-        mycell = self.ws.cell(row, col)
-        field_value = mycell.value
-        # check if the field is not string
-        if mycell.data_type == cell.cell.TYPE_NUMERIC:
-            self.validate_int_field(row,col)
-        elif self.valid_str(field_value):
-            self.disp_line_error(row, col, 'field includes newLine or comma')
-            return False
+
+        field_value = self.cell_value(row, col)
+        field_type = self.cell_type(row, col)
+
+        if field_type == NUMERIC_TYPE:
+            return self.validate_numeric_field(row, col, None)
         else:
-            return True
+            # check if the field is not string
+            if field_value.count('\n') > 0:
+                self.disp_line_error(row, col, 'field includes newLine')
+            elif field_value.count(',') > 0:
+                self.disp_line_error(row, col, 'field includes comma')
+            else:
+                return True
 
     def validate_float(self, row, col, num_of_decimals):
-        field_value = self.ws.cell(row, col).value
-        if 'float' not in str(type(field_value)):
+        field_value = self.cell_value(row, col)
+        if self.cell_type(row,col) == STRING_TYPE:
             self.disp_line_error(row, col, 'field should be decimal')
         # check number of decimals:
         x = str(field_value)
@@ -124,131 +174,15 @@ class ValidateUploadUtils:
         else:
             return True
 
-
-class ValidateUploadCSVUtils (ValidateUploadUtils):
-    # ws = None
-    # wb = None
-    # max_row = 65000
-    # header = []
-    # fp = None
-    # output_win = None
-    csv_reader = None
-
-    def __init__(self, csv_file_path):
-        csv_file = open(csv_file_path, mode='r', newline="\n", encoding='utf-8')
-        self.csv_reader = csv.reader(csv_file, delimiter=',', quotechar="'", quoting=csv.QUOTE_MINIMAL)
-
-        try:
-            self.fp = open(csv_file_path + '.txt', 'w+', encoding='utf-8')
-        except:
-            self.disp_general_error(f'Error creating o/p file: {csv_file_path}')
-
-    def read_next_csv_line(self):
-        try:
-            self.ws = next(self.csv_reader)
-            print (self.ws)
-        except StopIteration:
-            return None
+    def close_files(self):
+        if self.file_type == CSV:
+            self.csv_file.close()
         else:
-            return self.ws
-        # for f in self.ws:
-        #     print (type (f), self.ws)
-
-    def get_num_cells(self):
-        return len(self.ws)
-
-    def isfloat(self, x):
-        try:
-            a = float(x)
-        except ValueError:
-            return False
-        else:
-            return True
-
-    def isint(self, x):
-        try:
-            a = float(x)
-            b = int(a)
-        except ValueError:
-            return False
-        else:
-            return a == b
-
-    def field_value(self, col):
-        f = self.ws[col - 1]
-        if self.isint(f):
-            return int()
-        elif self.isfloat(f):
-            return float(f)
-        else:
-            return f.strip()
-
-    def field_type (self, col):
-        f = self.ws[col-1]
-        if self.isint(f):
-            return TYPE_INT
-        elif self.isfloat(f):
-            return TYPE_FLOAT
-        else:
-            return TYPE_STRING
-
-    def field_format (self, col):
-        if self.field_type(col) == TYPE_NUMERIC:
-            pass
-
-    def disp_line_error(self, cell_row, cell_col, opt_text=None):
-        field_name = self.header[cell_col-1]
-        field_value = self.field_value(cell_col)
-        if opt_text is None:
-            error_msg = f'Row {cell_row}: Invalid field: {field_name}: {field_value}'
-        else:
-            error_msg = f'Row {cell_row}: Invalid field: {field_name}: {field_value} --> {opt_text}'
-        self.disp_general_error(error_msg)
-
-    def validate_small_int_field(self, row, col):
-        field_value = self.field_value(col)
-        if self.field_type(col) != TYPE_INT or field_value > 255:
-            self.disp_line_error(row, col, 'Int field cannot be more than 255 char')
-            return False
-        else:
-            return True
-
-    # area is big integer but should not include thousand seperator
-    def validate_int_field(self, row, col):
-        field_value = self.field_value(col)
-        field_format = None
-        field_type = self.field_type(col)
-
-        if field_type != TYPE_INT:
-            self.disp_line_error(row, col, 'field must be integer')
-
-    def validate_str_field(self, row, col):
-        # field_value = self.field_value(col)
-        # field_type = self.field_type(col)
-        # # check if the field is not string
-        # if field_type != TYPE_STRING:
-        #     self.validate_int_field(row,col)
-        # elif self.valid_str(field_value):
-        #     self.disp_line_error(row, col, 'field includes newLine or comma')
-        #     return False
-        # else:
-        #     return True
-        return True # string is always valid
-
-    def validate_float(self, row, col, num_of_decimals):
-        field_value = self.field_value(col)
-        if self.field_type(col) != TYPE_FLOAT:
-            self.disp_line_error(row, col, 'field should be decimal')
-        # check number of decimals:
-        x = str(field_value)
-        if x[::-1].find('.') > num_of_decimals:
-            self.disp_line_error(row, col, f'field has more than {num_of_decimals} decimal places')
-            return False
-        else:
-            return True
+            self.wb.close()
+        self.fp.close()
 
 
-class ValidateLandSheet(ValidateUploadUtils):
+class LandSheetUpload(UploadSheetUtils):
     sheet_no_of_columns = 13
     header = [
         'كود المحافظة', 'كود المدينة', 'المدينة', 'كود المنطقة', 'المنطقة', 'كود الحي', 'الحي', 'كود المجاورة',
@@ -256,56 +190,56 @@ class ValidateLandSheet(ValidateUploadUtils):
     ]
 
     def check_file_header(self):
-        for i in range (1, self.sheet_no_of_columns):
-            if self.ws.cell(row=1, column=i).value != self.header[i-1]:
-                self.disp_general_error (f'Invalid Header, column: {self.ws.cell.value}' )
+        for i in range(1, self.sheet_no_of_columns):
+            if self.cell_value(row=1, col=i) != self.header[i - 1]:
+                self.disp_general_error(f'Invalid Header, column: {self.cell_value(1,i)}')
 
     def check_rows(self):
         cell_row = 2
         while True:
-            print (cell_row)
-            if self.ws.cell(row=cell_row, column=1).value is None:
-                self.disp_info (f'No of lands : {cell_row-2}' )
+            #print ('cell row:', cell_row, self.curr_row_no)
+            if self.cell_value(row=cell_row, col=1) is None:
+                self.disp_info(f'No of lands : {cell_row - 2}')
                 return
 
-        # 'كود المحافظة'
-            self.validate_small_int_field(cell_row, col=1)
-        # city code
-            self.validate_small_int_field(cell_row, col=2)
-        # city
+            # 'كود المحافظة'
+            self.validate_numeric_field(cell_row, col=1, max_number=255)
+            # city code
+            self.validate_numeric_field(cell_row, col=2, max_number=255)
+            # city
             self.validate_str_field(cell_row, col=3)
-        # area Code
-            self.validate_small_int_field(cell_row, col=4)
-        # 'المنطقة'
+            # area Code
+            self.validate_numeric_field(cell_row, col=4, max_number=255)
+            # 'المنطقة'
             self.validate_str_field(cell_row, col=5)
-        # check الحى
-            self.validate_small_int_field(cell_row, col=6)
-        # District name
+            # check الحى
+            self.validate_numeric_field(cell_row, col=6, max_number=255)
+            # District name
             self.validate_str_field(cell_row, col=7)
-        # sub district
-            self.validate_small_int_field(cell_row, col=8)
-        # sub District name
+            # sub district
+            self.validate_numeric_field(cell_row, col=8, max_number=255)
+            # sub District name
             self.validate_str_field(cell_row, col=9)
-        # 'رقم القطعة', 'مساحة القطعة', 'نسبة التميز', 'عدد القطع المتاحة'
-        # land-no is string, if number, make sure has no comma
-            self.validate_int_field(cell_row, 9)
-        # area is big number but should not include thousand seperator
-            self.validate_int_field(cell_row, 10)
-        # 'نسبة التميز'is decimal with only 2 decimal places
+            # 'رقم القطعة', 'مساحة القطعة', 'نسبة التميز', 'عدد القطع المتاحة'
+            # land-no is string, if number, make sure has no comma
+            self.validate_numeric_field(cell_row, 10)
+            # area is big number but should not include thousand seperator
+            self.validate_numeric_field(cell_row, 11)
+            # 'نسبة التميز'is decimal with only 2 decimal places
             self.validate_float(cell_row, 12, 2)
-        # no of available lands should be 1
-            self.validate_small_int_field(cell_row, col=13)
+            # no of available lands should be 1
+            self.validate_numeric_field(cell_row, col=13, max_number=1)
 
-            if self.ws.cell(row=cell_row, column=13).value != 1:
-                self.disp_line_error(cell_row, 13, 'no of lands should be 1')
+            # if self.ws.cell(row=cell_row, column=self.sheet_no_of_columns+1).value != "":
+            #     self.disp_general_error(f'Row {cell_row} sheet should be {self.sheet_no_of_columns} column, there are other columns in the sheet')
 
-            x= self.ws.cell(row=cell_row, column=self.sheet_no_of_columns+110)
-            print (x.value, " date_type: ", x.data_type, x)
-
-            #print (f'type: {type(x)}, format: {x.string}')
-            if self.ws.cell(row=cell_row, column=self.sheet_no_of_columns+1).value != None:
-                self.disp_general_error(f'Row {cell_row} sheet should be {self.sheet_no_of_columns} column, there are other columns in the sheet')
-
+            if self.file_type == CSV:
+                if len(self.curr_row) > self.sheet_no_of_columns:
+                    self.disp_general_error(
+                        f'Row {cell_row} sheet should be {self.sheet_no_of_columns} column, there are other columns in the sheet')
+                elif len(self.curr_row) < self.sheet_no_of_columns:
+                    self.disp_general_error(
+                        f'Row {cell_row} sheet should be {self.sheet_no_of_columns} column, there are less columns in the sheet')
             cell_row += 1
             if cell_row > self.max_row:
                 return
@@ -313,65 +247,7 @@ class ValidateLandSheet(ValidateUploadUtils):
     def check_land_sheet(self):
         self.check_file_header()
         self.check_rows()
-        self.wb.close()
-        self.fp.close()
-
-class ValidateLandCSV(ValidateUploadCSVUtils, ValidateLandSheet):
-    def check_file_header(self):
-        print ('from ValidateLandCSV ')
-        self.read_next_csv_line()
-        for i in range (0, self.sheet_no_of_columns):
-            if self.field_value(i) != self.header[i]:
-                self.disp_general_error (f'Invalid Header, column: {self.header[i]}' )
-
-    def check_rows(self):
-        cell_row = 2
-        while True:
-            if self.read_next_csv_line() is None:
-                self.disp_info (f'No of lands : {cell_row-2}' )
-                break
-            if self.get_num_cells() != self.sheet_no_of_columns:
-                self.disp_general_error(f'Row {cell_row} sheet should be {self.sheet_no_of_columns} column, there are other columns in the sheet')
-                cell_row +=1
-                continue
-        # 'كود المحافظة'
-            self.validate_small_int_field(cell_row, col=1)
-        # city code
-            self.validate_small_int_field(cell_row, col=2)
-        # city
-            self.validate_str_field(cell_row, col=3)
-        # area Code
-            self.validate_small_int_field(cell_row, col=4)
-        # 'المنطقة'
-            self.validate_str_field(cell_row, col=5)
-        # check الحى
-            self.validate_small_int_field(cell_row, col=6)
-        # District name
-            self.validate_str_field(cell_row, col=7)
-        # sub district
-            self.validate_small_int_field(cell_row, col=8)
-        # sub District name
-            self.validate_str_field(cell_row, col=9)
-        # 'رقم القطعة', 'مساحة القطعة', 'نسبة التميز', 'عدد القطع المتاحة'
-        # land-no is string, if number, make sure has no comma
-            self.validate_int_field(cell_row, 9)
-        # area is big number but should not include thousand seperator
-            self.validate_int_field(cell_row, 10)
-        # 'نسبة التميز'is decimal with only 2 decimal places
-            self.validate_float(cell_row, 12, 2)
-        # no of available lands should be 1
-            self.validate_small_int_field(cell_row, col=13)
-
-            if self.field_value(13) != 1:
-                print (self.field_value(13))
-                self.disp_line_error(cell_row, 13, 'no of lands should be 1')
-            cell_row += 1
-
-    def check_land_sheet(self):
-        self.check_file_header()
-        self.check_rows()
-        # self.csv_reader.close()
-        self.fp.close()
+        self.close_files()
 
 
 class MainMenu():
@@ -397,30 +273,27 @@ class MainMenu():
         exit_btn = Button(master, text="Exit ", command = master.quit).grid(row=0, column=4, sticky = W)
 
     def validate_land_sheet(self):
-        self.output.delete(0.0, END)        # clear window
         file_path = self.select_file_path()
-        self.output_file_name.set('Results of file name: '+ file_path)
-        if file_path.split('.')[-1].lower() == 'xlsx':
-            val_land = ValidateLandSheet(file_path)
+        if file_path != '':
+            val_land = LandSheetUpload(file_path)
+
             val_land.output_win = self.output
+            val_land.output_win.delete(0.0, END)        # clear window
+            self.output_file_name.set('Results of file name: '+ file_path)
             val_land.check_land_sheet()
-        elif file_path.split('.')[-1].lower() == 'csv':
-            val_land = ValidateLandCSV(file_path)
-            val_land.output_win = self.output
-            val_land.check_land_sheet()
+
+    def val_unit(self):
+        pass
 
     def select_file_path(self):
         try:
-            file_path = get_file_path(initialDir=".", DialogTitle="select excel/csv sheet", fileTypeText="excel, csv",
+            file_path = get_file_path(initialDir=".", DialogTitle="select land sheet", fileTypeText="excel or csv",
                                            fileType="*.xlsx;*.csv")
         except:
             print('No file selected ...')
             return ''
         else:
             return file_path
-
-    def val_unit(self):
-        pass
 
 def validate_res_sheet():
     root = Tk()

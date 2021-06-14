@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?><sqlb_project><db path="C:/Yahia/Python/src/HDB/training/pdf/data/pdf_dict.sqlite" readonly="0" foreign_keys="" case_sensitive_like="" temp_store="" wal_autocheckpoint="" synchronous=""/><attached/><window><main_tabs open="structure browser pragmas query" current="1"/></window><tab_structure><column_width id="0" width="300"/><column_width id="1" width="0"/><column_width id="2" width="100"/><column_width id="3" width="856"/><column_width id="4" width="0"/></tab_structure><tab_browse><current_table name="0,0:"/><default_encoding codec=""/><browse_table_settings/></tab_browse><tab_sql><sql name="SQL 1">--INSERT into pdf_dict (pdf_word, dict_word) select pdf_word, dict_word from pdf_dict_0
+
+select max(row_id) FROM pdf_dict</sql><sql name="stats">SELECT distinct type, count(*) from pdf_book 
+WHERE page_no = 4
+group by type
+
+-- SELECT distinct pdf_word, count(*) as c from pdf_book 
+-- group by pdf_word
+-- having c &gt;1 </sql><sql name="Update book from dict">UPDATE pdf_book 
+SET dict_word =  dict.dict_word, 
+	type = 'Dict'
+FROM
+(SELECT pdf_word, dict_word FROM pdf_dict) dict 
+WHERE pdf_book.pdf_word = dict.pdf_word AND type is NULL</sql><current_tab id="2"/></tab_sql></sqlb_project>

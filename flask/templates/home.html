@@ -1,0 +1,8 @@
+{% extends "template_0.html" %}
+{% block contents %}
+    {% for p in posts %}
+        <h1> {{p.title}} </h1>
+        <p> By {{p.author}} on {{p.date_posted}} </p>
+        <p> {{p.content}} </p>
+    {% endfor %}
+{%endblock contents%}

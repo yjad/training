@@ -1,0 +1,386 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<Profiles version="1.1">
+  <Profile description="" enabled="true" lastErrorLevel="0" lastErrorString="" lastUpdate="1623677401175" name="13-achout upload" type="Publish/Update">
+    <RuleSetDescriptor type="simple">
+      <SimpleRuleSet ignorePattern="" patternsType="" syncSubs="false" takePattern="" useFilter="true">
+        <FileFilter appliestodir="false" filtertype="0" matchtype="0">
+          <FileFilterRule op="8" pattern="([a-zA-Z0-9\s_\\.\-\(\):])+(.XML)$" ruletype="File name"/>
+        </FileFilter>
+      </SimpleRuleSet>
+    </RuleSetDescriptor>
+    <Schedule displayUnit="minutes" firstinterval="60000" interval="60000" type="interval"/>
+    <Source buffer="" password="026113005116103100" uri="sftp://172.17.75.13:22/shared/t24/t24perf/ACHOUT" username="T24FTP">
+      <Param name="publicKeyAuth" value="disabled"/>
+      <SecretParam name="keyPassphrase" value=""/>
+    </Source>
+    <Destination buffer="" password="" uri="file:/E:/ACH/ACHOUT/AutoUploaded/" username=""/>
+  </Profile>
+  <Profile description="" enabled="true" lastErrorLevel="0" lastErrorString="" lastUpdate="1623677439496" name="13_CHEQUE BOOK ISSUE" type="Publish/Update">
+    <RuleSetDescriptor type="simple">
+      <SimpleRuleSet ignorePattern="" patternsType="" syncSubs="false" takePattern="" useFilter="false"/>
+    </RuleSetDescriptor>
+    <Schedule displayUnit="minutes" firstinterval="60000" interval="60000" type="interval"/>
+    <Source buffer="" password="026113005116103100" uri="sftp://t24app2.hdbank.local:22/t24/t24perf/T24/UD/CHQ.PRINT" username="T24FTP">
+      <Param name="publicKeyAuth" value="disabled"/>
+      <SecretParam name="keyPassphrase" value=""/>
+    </Source>
+    <Destination buffer="" password="" uri="file:/E:/CLEARING/CHQ.PRINT/" username=""/>
+  </Profile>
+  <Profile description="" enabled="true" lastErrorLevel="0" lastErrorString="" lastUpdate="1623677160949" name="13_CUSTOMER REVIEW" type="Two Way Sync">
+    <RuleSetDescriptor type="simple">
+      <SimpleRuleSet ignorePattern="" patternsType="" syncSubs="false" takePattern="" useFilter="false"/>
+    </RuleSetDescriptor>
+    <Schedule displayUnit="minutes" firstinterval="300000" interval="300000" type="interval"/>
+    <Source buffer="" password="026113005116103100" uri="sftp://t24app2.hdbank.local:22/t24/t24perf/T24/UD/CUSTOMER.REVIEW" username="T24FTP">
+      <Param name="publicKeyAuth" value="disabled"/>
+      <SecretParam name="keyPassphrase" value=""/>
+    </Source>
+    <Destination buffer="" password="" uri="file:/E:/CUSTOMER%20REVIEW/" username=""/>
+  </Profile>
+  <Profile description="" enabled="true" lastErrorLevel="0" lastErrorString="" lastUpdate="1623677438277" name="13_INWARD CHEQUES" type="Publish/Update">
+    <RuleSetDescriptor type="simple">
+      <SimpleRuleSet ignorePattern="" patternsType="" syncSubs="false" takePattern="" useFilter="false"/>
+    </RuleSetDescriptor>
+    <Schedule displayUnit="minutes" firstinterval="60000" interval="60000" type="interval"/>
+    <Source buffer="" password="" uri="file:/E:/CLEARING/INCLR.FILE/" username=""/>
+    <Destination buffer="" password="026113005116103100" uri="sftp://t24app2.hdbank.local:22/t24/t24perf/T24/UD/INCLR.FILE" username="T24FTP">
+      <Param name="publicKeyAuth" value="disabled"/>
+      <SecretParam name="keyPassphrase" value=""/>
+    </Destination>
+  </Profile>
+  <Profile description="sync files from 33 to 13" enabled="true" lastErrorLevel="0" lastErrorString="" lastUpdate="1623677436594" name="13_INWARD_REJECTED_CHEQUES" type="Publish/Update">
+    <RuleSetDescriptor type="simple">
+      <SimpleRuleSet ignorePattern="" patternsType="" syncSubs="false" takePattern="" useFilter="false"/>
+    </RuleSetDescriptor>
+    <Schedule displayUnit="minutes" firstinterval="60000" interval="60000" type="interval"/>
+    <Source buffer="" password="" uri="file:/E:/CLEARING/INCCLR.REJ/" username=""/>
+    <Destination buffer="" password="026113005116103100" uri="sftp://t24app2.hdbank.local:22/t24/t24perf/T24/UD/INCCLR.REJ" username="T24FTP">
+      <Param name="publicKeyAuth" value="disabled"/>
+      <SecretParam name="keyPassphrase" value=""/>
+    </Destination>
+  </Profile>
+  <Profile description="" enabled="true" lastErrorLevel="0" lastErrorString="" lastUpdate="1623677435427" name="13_ISCORE MONTHLY" type="Publish/Update">
+    <RuleSetDescriptor type="simple">
+      <SimpleRuleSet ignorePattern="" patternsType="" syncSubs="true" takePattern="" useFilter="false"/>
+    </RuleSetDescriptor>
+    <Schedule displayUnit="minutes" firstinterval="60000" interval="60000" type="interval"/>
+    <Source buffer="" password="026113005116103100" uri="sftp://t24app2.hdbank.local:22/t24/t24perf/T24/UD/ISCR.OUT" username="T24FTP">
+      <Param name="publicKeyAuth" value="disabled"/>
+      <SecretParam name="keyPassphrase" value=""/>
+    </Source>
+    <Destination buffer="" password="" uri="file:/E:/ISCORE/ISCR.OUT/" username=""/>
+  </Profile>
+ <Profile description="" enabled="true" lastErrorLevel="0" lastErrorString="" lastUpdate="1623677435070" name="13_LG-LETTERS" type="Publish/Update">
+    <RuleSetDescriptor type="simple">
+      <SimpleRuleSet ignorePattern="" patternsType="" syncSubs="true" takePattern="" useFilter="false"/>
+    </RuleSetDescriptor>
+    <Schedule displayUnit="minutes" firstinterval="60000" interval="60000" type="interval"/>
+    <Source buffer="" password="026113005116103100" uri="sftp://t24app2.hdbank.local:22/t24/t24perf/T24/UD/HDB.LG.PRINT.OUT" username="T24FTP">
+      <Param name="publicKeyAuth" value="disabled"/>
+      <SecretParam name="keyPassphrase" value=""/>
+    </Source>
+    <Destination buffer="" password="" uri="file:/E:/LG-LETTERS/" username=""/>
+  </Profile>
+  <Profile description="" enabled="true" lastErrorLevel="0" lastErrorString="" lastUpdate="1623677431828" name="13_OUTWARD CLEARING" type="Publish/Update">
+    <RuleSetDescriptor type="simple">
+      <SimpleRuleSet ignorePattern="" patternsType="" syncSubs="true" takePattern="" useFilter="false"/>
+    </RuleSetDescriptor>
+    <Schedule displayUnit="minutes" firstinterval="60000" interval="60000" type="interval"/>
+    <Source buffer="" password="026113005116103100" uri="sftp://t24app2.hdbank.local:22/t24/t24perf/T24/UD/INCLR.FILE" username="T24FTP">
+      <Param name="publicKeyAuth" value="disabled"/>
+      <SecretParam name="keyPassphrase" value=""/>
+    </Source>
+    <Destination buffer="" password="" uri="file:/E:/CLEARING/INCLR.FILE/" username=""/>
+  </Profile>
+  <Profile description="" enabled="true" lastErrorLevel="0" lastErrorString="" lastUpdate="1623677428379" name="13_REJECTED_CHEQUES" type="Publish/Update">
+    <RuleSetDescriptor type="simple">
+      <SimpleRuleSet ignorePattern="" patternsType="" syncSubs="true" takePattern="" useFilter="false"/>
+    </RuleSetDescriptor>
+    <Schedule displayUnit="minutes" firstinterval="60000" interval="60000" type="interval"/>
+    <Source buffer="" password="026113005116103100" uri="sftp://t24app2.hdbank.local:22/t24/t24perf/T24/UD/INCCLR.REJ" username="T24FTP">
+      <Param name="publicKeyAuth" value="disabled"/>
+      <SecretParam name="keyPassphrase" value=""/>
+    </Source>
+    <Destination buffer="" password="" uri="file:/E:/CLEARING/INCCLR.REJ/" username=""/>
+  </Profile>
+  <Profile description="" enabled="true" lastErrorLevel="0" lastErrorString="" lastUpdate="1623677429612" name="13_STOP GOV" type="Publish/Update">
+    <RuleSetDescriptor type="simple">
+      <SimpleRuleSet ignorePattern="" patternsType="" syncSubs="true" takePattern="" useFilter="false"/>
+    </RuleSetDescriptor>
+    <Schedule displayUnit="minutes" firstinterval="60000" interval="60000" type="interval"/>
+    <Source buffer="" password="" uri="file:/E:/CLEARING/GOV.CHQ/" username=""/>
+    <Destination buffer="" password="026113005116103100" uri="sftp://t24app2.hdbank.local:22/t24/t24perf/T24/UD/GOV.CHQ" username="T24FTP">
+      <Param name="publicKeyAuth" value="disabled"/>
+      <SecretParam name="keyPassphrase" value=""/>
+    </Destination>
+  </Profile>
+  <Profile description="" enabled="true" lastErrorLevel="0" lastErrorString="" lastUpdate="1623677340844" name="7_CBE" type="Publish/Update">
+    <RuleSetDescriptor type="simple">
+      <SimpleRuleSet ignorePattern="" patternsType="" syncSubs="false" takePattern="" useFilter="false"/>
+    </RuleSetDescriptor>
+    <Schedule displayUnit="minutes" firstinterval="360000" interval="360000" type="interval"/>
+    <Source buffer="" password="026113005116103100" uri="sftp://t24app1.hdbank.local:22/shared/t24/t24perf/CBE" username="T24FTP">
+      <Param name="publicKeyAuth" value="disabled"/>
+      <SecretParam name="keyPassphrase" value=""/>
+    </Source>
+    <Destination buffer="" password="" uri="file:/E:/CBE/" username=""/>
+  </Profile>
+  <Profile description="" enabled="true" lastErrorLevel="0" lastErrorString="" lastUpdate="1623677427530" name="7_CHEQUE BOOK ISSUE" type="Publish/Update">
+    <RuleSetDescriptor type="simple">
+      <SimpleRuleSet ignorePattern="" patternsType="" syncSubs="true" takePattern="" useFilter="false"/>
+    </RuleSetDescriptor>
+    <Schedule displayUnit="minutes" firstinterval="60000" interval="60000" type="interval"/>
+    <Source buffer="" password="026113005116103100" uri="sftp://t24app1.hdbank.local:22/t24/t24perf/T24/UD/CHQ.PRINT" username="T24FTP">
+      <Param name="publicKeyAuth" value="disabled"/>
+      <SecretParam name="keyPassphrase" value=""/>
+    </Source>
+    <Destination buffer="" password="" uri="file:/E:/CLEARING/CHQ.PRINT/" username=""/>
+  </Profile>
+  <Profile description="" enabled="true" lastErrorLevel="0" lastErrorString="" lastUpdate="1623677200998" name="7_CUSTOMER REVIEW FREQ" type="Two Way Sync">
+    <RuleSetDescriptor type="simple">
+      <SimpleRuleSet ignorePattern="" patternsType="" syncSubs="true" takePattern="" useFilter="false"/>
+    </RuleSetDescriptor>
+    <Schedule displayUnit="minutes" firstinterval="300000" interval="300000" type="interval"/>
+    <Source buffer="" password="026113005116103100" uri="sftp://t24app1.hdbank.local:22/t24/t24perf/T24/UD/CUSTOMER.REVIEW" username="T24FTP">
+      <Param name="publicKeyAuth" value="disabled"/>
+      <SecretParam name="keyPassphrase" value=""/>
+    </Source>
+    <Destination buffer="" password="" uri="file:/E:/CUSTOMER%20REVIEW/" username=""/>
+  </Profile>
+  <Profile description="" enabled="false" lastErrorLevel="0" lastErrorString="" name="7_INWARD ACH" type="Publish/Update">
+    <RuleSetDescriptor type="simple">
+      <SimpleRuleSet ignorePattern="" patternsType="" syncSubs="true" takePattern="" useFilter="false"/>
+    </RuleSetDescriptor>
+    <Schedule displayUnit="minutes" firstinterval="60000" interval="60000" type="interval"/>
+    <Source buffer="" password="" uri="file:/E:/ACH/ACHIN/" username=""/>
+    <Destination buffer="" password="026113005116103100" uri="sftp://t24app1.hdbank.local:22/shared/t24/t24perf/ACHIN" username="T24FTP">
+      <Param name="publicKeyAuth" value="disabled"/>
+      <SecretParam name="keyPassphrase" value=""/>
+    </Destination>
+  </Profile>
+  <Profile description="" enabled="true" lastErrorLevel="0" lastErrorString="" lastUpdate="1623677412349" name="7_INWARD CHEQUES" type="Publish/Update">
+    <RuleSetDescriptor type="simple">
+      <SimpleRuleSet ignorePattern="" patternsType="" syncSubs="false" takePattern="" useFilter="false"/>
+    </RuleSetDescriptor>
+    <Schedule displayUnit="minutes" firstinterval="60000" interval="60000" type="interval"/>
+    <Source buffer="" password="" uri="file:/E:/CLEARING/INCLR.FILE/" username=""/>
+    <Destination buffer="" password="026113005116103100" uri="sftp://t24app1.hdbank.local:22/t24/t24perf/T24/UD/INCLR.FILE" username="T24FTP">
+      <Param name="publicKeyAuth" value="disabled"/>
+      <SecretParam name="keyPassphrase" value=""/>
+    </Destination>
+  </Profile>
+  <Profile description="" enabled="true" lastErrorLevel="0" lastErrorString="" lastUpdate="1623677423604" name="7_INWARD SWIFT" type="Two Way Sync">
+    <RuleSetDescriptor type="simple">
+      <SimpleRuleSet ignorePattern="" patternsType="" syncSubs="true" takePattern="" useFilter="false"/>
+    </RuleSetDescriptor>
+    <Schedule displayUnit="minutes" firstinterval="60000" interval="60000" type="interval"/>
+    <Source buffer="" password="" uri="file:/E:/ALLIANCE/F.ALLIANCE.MSG/" username=""/>
+    <Destination buffer="" password="026113005116103100" uri="sftp://t24app1.hdbank.local:22/shared/t24/t24perf/bnk.interface/ALLIANCE/F.ALLIANCE.MSG" username="T24FTP">
+      <Param name="publicKeyAuth" value="disabled"/>
+      <SecretParam name="keyPassphrase" value=""/>
+    </Destination>
+  </Profile>
+  <Profile description="syncing from 33 to 7" enabled="true" lastErrorLevel="0" lastErrorString="" lastUpdate="1623677425040" name="7_INWARD_REJECTED_CHEQUES" type="Publish/Update">
+    <RuleSetDescriptor type="simple">
+      <SimpleRuleSet ignorePattern="" patternsType="" syncSubs="true" takePattern="" useFilter="false">
+        <FileFilter appliestodir="true" filtertype="1" matchtype="0">
+          <FileFilterRule op="0" pattern="Backup" ruletype="File path"/>
+        </FileFilter>
+      </SimpleRuleSet>
+    </RuleSetDescriptor>
+    <Schedule displayUnit="minutes" firstinterval="60000" interval="60000" type="interval"/>
+    <Source buffer="" password="" uri="file:/E:/CLEARING/INCCLR.REJ/" username=""/>
+    <Destination buffer="" password="026113005116103100" uri="sftp://t24app1.hdbank.local:22/t24/t24perf/T24/UD/INCCLR.REJ" username="T24FTP">
+      <Param name="publicKeyAuth" value="disabled"/>
+      <SecretParam name="keyPassphrase" value=""/>
+    </Destination>
+  </Profile>
+  <Profile description="" enabled="true" lastErrorLevel="0" lastErrorString="" lastUpdate="1623677406714" name="7_ISCORE MONTHLY OUT" type="Publish/Update">
+    <RuleSetDescriptor type="simple">
+      <SimpleRuleSet ignorePattern="" patternsType="" syncSubs="true" takePattern="" useFilter="false"/>
+    </RuleSetDescriptor>
+    <Schedule displayUnit="minutes" firstinterval="60000" interval="60000" type="interval"/>
+    <Source buffer="" password="026113005116103100" uri="sftp://t24app1.hdbank.local:22/t24/t24perf/T24/UD/ISCR.OUT" username="T24FTP">
+      <Param name="publicKeyAuth" value="disabled"/>
+      <SecretParam name="keyPassphrase" value=""/>
+    </Source>
+    <Destination buffer="" password="" uri="file:/E:/ISCORE/ISCR.OUT/" username=""/>
+  </Profile>
+  <Profile description="" enabled="true" lastErrorLevel="0" lastErrorString="" lastUpdate="1623677410766" name="7_ISKAN EXPORT CUSTOMER" type="Publish/Update">
+    <RuleSetDescriptor type="simple">
+      <SimpleRuleSet ignorePattern="" patternsType="" syncSubs="false" takePattern="" useFilter="false"/>
+    </RuleSetDescriptor>
+    <Schedule displayUnit="minutes" firstinterval="60000" interval="60000" type="interval"/>
+    <Source buffer="" password="026113005116103100" uri="sftp://t24app1.hdbank.local:22/shared/t24/t24perf/ISKAN/CUSTOMER" username="T24FTP">
+      <Param name="publicKeyAuth" value="disabled"/>
+      <SecretParam name="keyPassphrase" value=""/>
+    </Source>
+    <Destination buffer="" password="" uri="file:/E:/ISKAN/CUSTOMER/" username=""/>
+  </Profile>
+  <Profile description="" enabled="true" lastErrorLevel="0" lastErrorString="" lastUpdate="1623677405956" name="7_ISKAN OF DATE PAYMENT" type="Publish/Update">
+    <RuleSetDescriptor type="simple">
+      <SimpleRuleSet ignorePattern="" patternsType="" syncSubs="true" takePattern="" useFilter="false"/>
+    </RuleSetDescriptor>
+    <Schedule displayUnit="minutes" firstinterval="60000" interval="60000" type="interval"/>
+    <Source buffer="" password="" uri="file:/E:/ISKAN/PAYMENT/" username=""/>
+    <Destination buffer="" password="026113005116103100" uri="sftp://t24app1.hdbank.local:22/shared/t24/t24perf/ISKAN/PAYMENT" username="T24FTP">
+      <Param name="publicKeyAuth" value="disabled"/>
+      <SecretParam name="keyPassphrase" value=""/>
+    </Destination>
+  </Profile>
+  <Profile description="" enabled="true" lastErrorLevel="0" lastErrorString="" lastUpdate="1623677406356" name="7_ISKAN STO EXECUTED" type="Publish/Update">
+    <RuleSetDescriptor type="simple">
+      <SimpleRuleSet ignorePattern="" patternsType="" syncSubs="true" takePattern="" useFilter="false"/>
+    </RuleSetDescriptor>
+    <Schedule displayUnit="minutes" firstinterval="60000" interval="60000" type="interval"/>
+    <Source buffer="" password="026113005116103100" uri="sftp://t24app1.hdbank.local:22/shared/t24/t24perf/ISKAN/STO.OUT" username="T24FTP">
+      <Param name="publicKeyAuth" value="disabled"/>
+      <SecretParam name="keyPassphrase" value=""/>
+    </Source>
+    <Destination buffer="" password="" uri="file:/E:/ISKAN/STO.OUT/" username=""/>
+  </Profile>
+  <Profile description="" enabled="true" lastErrorLevel="0" lastErrorString="" lastUpdate="1623677405592" name="7_ISKAN STO IN STO" type="Publish/Update">
+    <RuleSetDescriptor type="simple">
+      <SimpleRuleSet ignorePattern="" patternsType="" syncSubs="true" takePattern="" useFilter="false"/>
+    </RuleSetDescriptor>
+    <Schedule displayUnit="minutes" firstinterval="60000" interval="60000" type="interval"/>
+    <Source buffer="" password="" uri="file:/E:/ISKAN/STO.IN/" username=""/>
+    <Destination buffer="" password="026113005116103100" uri="sftp://t24app1.hdbank.local:22/shared/t24/t24perf/ISKAN/STO.IN" username="T24FTP">
+      <Param name="publicKeyAuth" value="disabled"/>
+      <SecretParam name="keyPassphrase" value=""/>
+    </Destination>
+  </Profile>
+  <Profile description="" enabled="true" lastErrorLevel="0" lastErrorString="" lastUpdate="1623677384333" name="7_LG-LETTERS" type="Publish/Update">
+    <RuleSetDescriptor type="simple">
+      <SimpleRuleSet ignorePattern="" patternsType="" syncSubs="false" takePattern="" useFilter="false"/>
+    </RuleSetDescriptor>
+    <Schedule displayUnit="minutes" firstinterval="120000" interval="120000" type="interval"/>
+    <Source buffer="" password="026113005116103100" uri="sftp://t24app1.hdbank.local:22/t24/t24perf/T24/UD/HDB.LG.PRINT.OUT" username="T24FTP">
+      <Param name="publicKeyAuth" value="disabled"/>
+      <SecretParam name="keyPassphrase" value=""/>
+    </Source>
+    <Destination buffer="" password="" uri="file:/E:/LG-LETTERS/" username=""/>
+  </Profile>
+  <Profile description="" enabled="true" lastErrorLevel="0" lastErrorString="" lastUpdate="1623677200246" name="7_Meza Report" type="Publish/Update">
+    <RuleSetDescriptor type="simple">
+      <SimpleRuleSet ignorePattern="" patternsType="" syncSubs="true" takePattern="" useFilter="false"/>
+    </RuleSetDescriptor>
+    <Schedule displayUnit="minutes" firstinterval="300000" interval="300000" type="interval"/>
+    <Source buffer="" password="026113005116103100" uri="sftp://t24app1.hdbank.local:22/shared/t24/t24perf/Meza.report/" username="T24FTP">
+      <Param name="publicKeyAuth" value="disabled"/>
+      <SecretParam name="keyPassphrase" value=""/>
+    </Source>
+    <Destination buffer="" password="" uri="file:/E:/CARDS/Meza.report/" username=""/>
+  </Profile>
+  <Profile description="" enabled="false" lastErrorLevel="0" lastErrorString="" name="7_OUTWARD ACH" type="Publish/Update">
+    <RuleSetDescriptor type="simple">
+      <SimpleRuleSet ignorePattern="" patternsType="" syncSubs="true" takePattern="" useFilter="false"/>
+    </RuleSetDescriptor>
+    <Schedule displayUnit="minutes" firstinterval="60000" interval="60000" type="interval"/>
+    <Source buffer="" password="026113005116103100" uri="sftp://t24app1.hdbank.local:22/shared/t24/t24perf/ACHOUT" username="T24FTP">
+      <Param name="publicKeyAuth" value="disabled"/>
+      <SecretParam name="keyPassphrase" value=""/>
+    </Source>
+    <Destination buffer="" password="" uri="file:/E:/ACH/ACHOUT/" username=""/>
+  </Profile>
+  <Profile description="" enabled="true" lastErrorLevel="0" lastErrorString="" lastUpdate="1623677404844" name="7_OUTWARD CLEARING" type="Publish/Update">
+    <RuleSetDescriptor type="simple">
+      <SimpleRuleSet ignorePattern="" patternsType="" syncSubs="false" takePattern="" useFilter="false"/>
+    </RuleSetDescriptor>
+    <Schedule displayUnit="minutes" firstinterval="60000" interval="60000" type="interval"/>
+    <Source buffer="" password="026113005116103100" uri="sftp://t24app1.hdbank.local:22/t24/t24perf/T24/UD/INCLR.FILE" username="T24FTP">
+      <Param name="publicKeyAuth" value="disabled"/>
+      <SecretParam name="keyPassphrase" value=""/>
+    </Source>
+    <Destination buffer="" password="" uri="file:/E:/CLEARING/INCLR.FILE/" username=""/>
+  </Profile>
+  <Profile description="" enabled="true" lastErrorLevel="0" lastErrorString="" lastUpdate="1623677405223" name="7_OUTWARD SWIFT" type="Publish/Update">
+    <RuleSetDescriptor type="simple">
+      <SimpleRuleSet ignorePattern="" patternsType="" syncSubs="true" takePattern="" useFilter="false"/>
+    </RuleSetDescriptor>
+    <Schedule displayUnit="minutes" firstinterval="60000" interval="60000" type="interval"/>
+    <Source buffer="" password="026113005116103100" uri="sftp://t24app1.hdbank.local:22/shared/t24/t24perf/bnk.interface/ALLIANCE/F.ALLIANCE.INPUT" username="T24FTP">
+      <Param name="publicKeyAuth" value="disabled"/>
+      <SecretParam name="keyPassphrase" value=""/>
+    </Source>
+    <Destination buffer="" password="" uri="file:/E:/ALLIANCE/F.ALLIANCE.INPUT/" username=""/>
+  </Profile>
+  <Profile description="" enabled="true" lastErrorLevel="0" lastErrorString="" lastUpdate="1623677403212" name="7_REJECTED CHEQUES" type="Publish/Update">
+    <RuleSetDescriptor type="simple">
+      <SimpleRuleSet ignorePattern="" patternsType="" syncSubs="true" takePattern="" useFilter="false"/>
+    </RuleSetDescriptor>
+    <Schedule displayUnit="minutes" firstinterval="60000" interval="60000" type="interval"/>
+    <Source buffer="" password="026113005116103100" uri="sftp://t24app1.hdbank.local:22/t24/t24perf/T24/UD/INCCLR.REJ" username="T24FTP">
+      <Param name="publicKeyAuth" value="disabled"/>
+      <SecretParam name="keyPassphrase" value=""/>
+    </Source>
+    <Destination buffer="" password="" uri="file:/E:/CLEARING/INCCLR.REJ/" username=""/>
+  </Profile>
+  <Profile description="" enabled="true" lastErrorLevel="0" lastErrorString="" lastUpdate="1623677200639" name="7_SMES" type="Publish/Update">
+    <RuleSetDescriptor type="simple">
+      <SimpleRuleSet ignorePattern="" patternsType="" syncSubs="true" takePattern="" useFilter="false"/>
+    </RuleSetDescriptor>
+    <Schedule displayUnit="minutes" firstinterval="300000" interval="300000" type="interval"/>
+    <Source buffer="" password="026113005116103100" uri="sftp://t24app1.hdbank.local:22/shared/t24/t24perf/SMES/" username="T24FTP">
+      <Param name="publicKeyAuth" value="disabled"/>
+      <SecretParam name="keyPassphrase" value=""/>
+    </Source>
+    <Destination buffer="" password="" uri="file:/E:/SMES/" username=""/>
+  </Profile>
+  <Profile description="" enabled="true" lastErrorLevel="0" lastErrorString="" lastUpdate="1623677402080" name="7_STOP GOVERNMENTAL CHEQUES" type="Two Way Sync">
+    <RuleSetDescriptor type="simple">
+      <SimpleRuleSet ignorePattern="" patternsType="" syncSubs="true" takePattern="" useFilter="false"/>
+    </RuleSetDescriptor>
+    <Schedule displayUnit="minutes" firstinterval="60000" interval="60000" type="interval"/>
+    <Source buffer="" password="" uri="file:/E:/CLEARING/GOV.CHQ/" username=""/>
+    <Destination buffer="" password="026113005116103100" uri="sftp://t24app1.hdbank.local:22/t24/t24perf/T24/UD/GOV.CHQ" username="T24FTP">
+      <Param name="publicKeyAuth" value="disabled"/>
+      <SecretParam name="keyPassphrase" value=""/>
+    </Destination>
+  </Profile>
+  <Profile description="" enabled="true" lastErrorLevel="0" lastErrorString="" lastUpdate="1623677199884" name="7_retail_out" type="Backup Copy">
+    <RuleSetDescriptor type="simple">
+      <SimpleRuleSet ignorePattern="" patternsType="" syncSubs="true" takePattern="" useFilter="false"/>
+    </RuleSetDescriptor>
+    <Schedule displayUnit="minutes" firstinterval="300000" interval="300000" type="interval"/>
+    <Source buffer="" password="026113005116103100" uri="sftp://t24app1.hdbank.local:22/shared/t24/t24perf/RETAILOUT" username="T24FTP">
+      <Param name="publicKeyAuth" value="disabled"/>
+      <SecretParam name="keyPassphrase" value=""/>
+    </Source>
+    <Destination buffer="" password="" uri="file:/E:/RETAIL/" username=""/>
+  </Profile>
+  <Profile description="" enabled="true" lastErrorLevel="0" lastErrorString="" lastUpdate="1623677401810" name="Branches_Minors" type="Publish/Update">
+    <RuleSetDescriptor type="simple">
+      <SimpleRuleSet ignorePattern="" patternsType="" syncSubs="true" takePattern="" useFilter="false"/>
+    </RuleSetDescriptor>
+    <Schedule displayUnit="minutes" firstinterval="60000" interval="60000" type="interval"/>
+    <Source buffer="" password="026113005116103100" uri="sftp://t24app1.hdbank.local:22/shared/t24/t24perf/Branches.Minors" username="T24FTP">
+      <Param name="publicKeyAuth" value="disabled"/>
+      <SecretParam name="keyPassphrase" value=""/>
+    </Source>
+    <Destination buffer="" password="" uri="file:/E:/Branches_Minors/" username=""/>
+  </Profile>
+  <Profile description="" enabled="false" lastErrorLevel="0" lastErrorString="" name="CARDS INPUT FILES" type="Publish/Update">
+    <RuleSetDescriptor type="simple">
+      <SimpleRuleSet ignorePattern="" patternsType="" syncSubs="true" takePattern="" useFilter="false"/>
+    </RuleSetDescriptor>
+    <Schedule displayUnit="minutes" firstinterval="60000" interval="60000" type="interval"/>
+    <Source buffer="" password="" uri="file:/E:/CARDS/INPUT%20FILES/" username=""/>
+    <Destination buffer="" password="026113005116103100" uri="sftp://t24app1.hdbank.local:22/shared/t24/t24perf/CARDIN" username="T24FTP">
+      <Param name="publicKeyAuth" value="disabled"/>
+      <SecretParam name="keyPassphrase" value=""/>
+    </Destination>
+  </Profile>
+  <Profile description="" enabled="false" lastErrorLevel="0" lastErrorString="" name="CARDS OUTPUT FILES" type="Publish/Update">
+    <RuleSetDescriptor type="simple">
+      <SimpleRuleSet ignorePattern="" patternsType="" syncSubs="true" takePattern="" useFilter="false"/>
+    </RuleSetDescriptor>
+    <Schedule displayUnit="minutes" firstinterval="60000" interval="60000" type="interval"/>
+    <Source buffer="" password="026113005116103100" uri="sftp://t24app1.hdbank.local:22/shared/t24/t24perf/CARDOUT" username="T24FTP">
+      <Param name="publicKeyAuth" value="disabled"/>
+      <SecretParam name="keyPassphrase" value=""/>
+    </Source>
+    <Destination buffer="" password="" uri="file:/E:/CARDS/OUTPUT%20FILES/" username=""/>
+  </Profile>
+</Profiles>
+

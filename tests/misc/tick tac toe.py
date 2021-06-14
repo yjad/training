@@ -1,3 +1,5 @@
+import random
+
 game = [[' ',' ',' '],
         [' ',' ',' '],
         [' ',' ',' ']]
@@ -5,6 +7,11 @@ coordinates = [[1,2,3],
         [4,5,6],
         [7,8,9]]
 
+
+# for i in range(3):
+#     for j in range(3):
+#         #rnd = random.randint(0,2)
+#         game[i][j] = random.randint(0,2)
 
 def check_tic_tac_toe_winner(player):
     p = player_symbol(player)
@@ -70,23 +77,23 @@ def get_coordinate(one_coord:int):
         for j in range(3):
             if coordinates[i][j] == one_coord:
                 return i,j
+    # i = int((one_coord - 1)/3)
+    # j =  (one_coord-1) - (i*3)
+    # return i,j
 
 
-# -----------------------------------------------------
-#  Execute
-# -----------------------------------------------------
+print_game()
 
 while True:
-    print_game()
     status = get_player_input(1)
+    print_game()
     if status == -1: # quit
         break
     elif check_tic_tac_toe_winner(1) == 0:     # player 1 wins
         break
 
-    print_game()
     get_player_input(2)
-
+    print_game()
     if status == -1:  # quit
         break
     elif check_tic_tac_toe_winner(2) == 0:     # player 2 wins
