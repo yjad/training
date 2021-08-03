@@ -1,5 +1,7 @@
+import enum
 import xml.etree.ElementTree as ET 
 from lxml import etree
+import re
 import csv
 
 def parse_fullSync():
@@ -16,23 +18,35 @@ def parse_fullSync():
 def local_name(tag_text):
     return etree.QName(tag_text).localname
 
-def print_xml_sample_level(elmt, level, seq , sample_count=1):
+def print_xml_sample_level(elmt, level, seq , sample_count=1, fp=None):
     
     if seq >= sample_count : return
     attrib = f", attrib: {elmt.attrib}" if elmt.attrib else ""
     text = f", text: {elmt.text}" if elmt.text else ""
-    print (level * '\t', f"{seq}- L{level}: tag: {local_name(elmt.tag)}{attrib}{text}")
-    # print (level * '\t', f"{seq}- L{level}: tag: {local_name(elmt.tag)}, attrib: {elmt.attrib}, text: {elmt.text}")
+    line = level * '\t' + f"{seq}- L{level}: tag: {local_name(elmt.tag)}{attrib}{text}"
+    if fp:
+        fp.writelines(line + "\n")
+    else:
+        print (line)
+        # print (level * '\t', f"{seq}- L{level}: tag: {local_name(elmt.tag)}{attrib}{text}")
+    
     if len(elmt) > 0:
         for i,sub in enumerate(elmt):
             if i >= sample_count: break
-            print_xml_sample_level(sub, level+1, i , sample_count)
+            print_xml_sample_level(sub, level+1, i , sample_count, fp)  # recursive
 
-def print_xml_sample(root, sample_count=1):
+def print_xml_sample(root, sample_count=1, file_name = None):
     sample_count = sample_count 
+    if file_name:
+        f = open(file_name, 'w', encoding='utf8')
+    else:
+        f = None
     for i, child in enumerate(root):
         if i>= sample_count : break
-        print_xml_sample_level(child, 0, i , sample_count)
+        print_xml_sample_level(child, 0, i , sample_count, f)
+
+    if file_name: f.close()
+
 
 def print_xml_sample_0(root, sample_count=1):
     sample_count = sample_count -1
@@ -58,32 +72,66 @@ def print_xml_sample_0(root, sample_count=1):
 
 
 def parse_pacs():
-    file_name = r"C:\Users\Yahia\Documents\ACH sample\29_4003076817_BOOKING_8034_1.xml"
     # file_name = r"C:\Yahia\HDB\HDB-CBP\3- Execution\Interfaces\IRDs\ACH\0002\booking\ACH sample\29_4003076817_BOOKING_8034_1.xml"
-    # tree = ET.parse("29_PACS008_20160802191205682107.xml") 
+    # file_name = r"C:\Yahia\Home\Yahia-Dev\Python\training\xml\ACH\29_PACS008_2021080309241818109.XML"
+    file_name  = "29_PACS008_20160802191205682107.xml"
     tree = ET.parse(file_name) 
 
-    f_keys = open ('trx_keys.txt', 'w')
     root = tree.getroot()
-    print_xml_sample(root,10)
-    keys_writen = True
-    with open("trx.txt", 'wt', encoding='utf8') as f:   
-        for e in root:      # transactions
-            trx_dict = xml_to_dict(e)
-            f.writelines(str(trx_dict)+"\n")
-            if trx_dict.get("GrpHdr"):
-                f_keys.writelines(str(trx_dict.keys()) + "\n")
-            elif not keys_writen:
-                f_keys.writelines(str(trx_dict.keys()) + "\n")
-                keys_writen = True
-            else:
-                f_keys.writelines(str(trx_dict.keys()) + "\n")
+    print (root.tag)
+    # print_xml_sample(root,3)
+    print_xml_sample(root,999,"trx.txt")
 
-    f_keys.close()
+    ns = re.match(r'{.*}', root.tag)
+    if ns:
+        ns = ns.group(0)
+    else:
+        print ("file has no NameSpace")
+        ns = ''
+        
+    # print ("ns: ", ns)
+    grp_header = root[0].find(f"./{ns}GrpHdr")
+    print (xml_to_dict(grp_header, ns))
+    # trans_grp_tag = "PmtTx"
+    trans_grp_tag = "CdtTrfTxInf"
+    # trans_grp_tag = "CdtTrf"
+    trxs = root[0].findall(f"./{ns}{trans_grp_tag}")
+    for i,trx in enumerate(trxs):
+        # print (trx)
+        if i > 4: break
+        print (i, '-', xml_to_dict(trx, ns))
+    
     
     return
 
-def xml_to_dict(element):
+def xml_to_dict_rec(element, dic):
+    for L0 in element:
+        if type(L0.text) == str:
+            t = local_name(L0.tag)
+            if dic.get(t):  # key alreay exist
+                for i in range(100):
+                    if not dic.get(f"{t}_{i}"):
+                        dic.update ({f"{t}_{i}":L0.text})
+                        break
+            else:
+                dic.update({t:L0.text})
+
+        else:
+            dic = xml_to_dict_rec(L0, dic)      # recursive
+    return dic
+
+def xml_to_dict(element, ns):
+    if ns:      # file has name space
+        dic = {local_name(element.tag):element.text}
+    else:
+        # dic = {element.tag:element.text}
+        dic = {}
+    dic = xml_to_dict_rec(element, dic)
+
+    return dic 
+
+
+def xml_to_dict_0(element):
     dic = {local_name(element.tag):element.text}
     for L0 in element:
         if type(L0.text) == str:
