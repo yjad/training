@@ -3,7 +3,7 @@ from lxml import etree
 import csv
 
 def parse_fullSync():
-# Pass the path of the xml document 
+    # Pass the path of the xml document 
     tree = ET.parse('fullSync.xml') 
     root = tree.getroot()
 
@@ -25,13 +25,13 @@ def print_xml_sample_level(elmt, level, seq , sample_count=1):
     # print (level * '\t', f"{seq}- L{level}: tag: {local_name(elmt.tag)}, attrib: {elmt.attrib}, text: {elmt.text}")
     if len(elmt) > 0:
         for i,sub in enumerate(elmt):
-            if i > sample_count: break
+            if i >= sample_count: break
             print_xml_sample_level(sub, level+1, i , sample_count)
 
 def print_xml_sample(root, sample_count=1):
-    sample_count = sample_count -1
+    sample_count = sample_count 
     for i, child in enumerate(root):
-        if i> sample_count : break
+        if i>= sample_count : break
         print_xml_sample_level(child, 0, i , sample_count)
 
 def print_xml_sample_0(root, sample_count=1):
@@ -58,7 +58,8 @@ def print_xml_sample_0(root, sample_count=1):
 
 
 def parse_pacs():
-    file_name = r"C:\Yahia\HDB\HDB-CBP\3- Execution\Interfaces\IRDs\ACH\0002\booking\ACH sample\29_4003076817_BOOKING_8034_1.xml"
+    file_name = r"C:\Users\Yahia\Documents\ACH sample\29_4003076817_BOOKING_8034_1.xml"
+    # file_name = r"C:\Yahia\HDB\HDB-CBP\3- Execution\Interfaces\IRDs\ACH\0002\booking\ACH sample\29_4003076817_BOOKING_8034_1.xml"
     # tree = ET.parse("29_PACS008_20160802191205682107.xml") 
     tree = ET.parse(file_name) 
 
@@ -67,7 +68,7 @@ def parse_pacs():
     print_xml_sample(root,10)
     keys_writen = True
     with open("trx.txt", 'wt', encoding='utf8') as f:   
-        for e in root[0]:      # transactions
+        for e in root:      # transactions
             trx_dict = xml_to_dict(e)
             f.writelines(str(trx_dict)+"\n")
             if trx_dict.get("GrpHdr"):
