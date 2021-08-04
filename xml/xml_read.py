@@ -72,16 +72,15 @@ def print_xml_sample_0(root, sample_count=1):
 
 
 def parse_pacs():
-    # file_name = r"C:\Yahia\HDB\HDB-CBP\3- Execution\Interfaces\IRDs\ACH\0002\booking\ACH sample\29_4003076817_BOOKING_8034_1.xml"
+    file_name = r"C:\Yahia\HDB\HDB-CBP\3- Execution\Interfaces\IRDs\ACH\0002\booking\ACH sample\29_4003076817_BOOKING_8034_1.xml"
     # file_name = r"C:\Yahia\Home\Yahia-Dev\Python\training\xml\ACH\29_PACS008_2021080309241818109.XML"
-    file_name  = "29_PACS008_20160802191205682107.xml"
+    # file_name  = "29_PACS008_20160802191205682107.xml"
     tree = ET.parse(file_name) 
 
     root = tree.getroot()
-    print (root.tag)
+    # print (root.tag)
     # print_xml_sample(root,3)
     print_xml_sample(root,999,"trx.txt")
-
     ns = re.match(r'{.*}', root.tag)
     if ns:
         ns = ns.group(0)
@@ -91,21 +90,31 @@ def parse_pacs():
         
     # print ("ns: ", ns)
     grp_header = root[0].find(f"./{ns}GrpHdr")
-    print (xml_to_dict(grp_header, ns))
+    print ("GrpHdr", xml_to_dict(grp_header))
     # trans_grp_tag = "PmtTx"
     trans_grp_tag = "CdtTrfTxInf"
+    one_trx = root[0].find(f"./{ns}{trans_grp_tag}")
+    print ("CdtTrfTxInf", xml_to_dict(one_trx))
     # trans_grp_tag = "CdtTrf"
     trxs = root[0].findall(f"./{ns}{trans_grp_tag}")
-    for i,trx in enumerate(trxs):
-        # print (trx)
-        if i > 4: break
-        print (i, '-', xml_to_dict(trx, ns))
-    
-    
+    # 
+    # print (("CdtTrfTxInf", xml_to_dict(trx)) for trx in trxs)
+    for trx in trxs:
+        print (xml_to_dict(trx), "\n ----------------------")
+    # print ("CdtTrfTxInf", xml_to_dict(trxs[0]))
+    # print ("CdtTrfTxInf", xml_to_dict(trxs))
+    # xml_to_dict(root)
+
     return
 
-def xml_to_dict_rec(element, dic):
+def xml_to_dict(element):
+    if type(element) == list:
+        print ("Error - use One Element at a time")
+        return None 
+
+    dic = {}
     for L0 in element:
+        # print ("element->:", L0)
         if type(L0.text) == str:
             t = local_name(L0.tag)
             if dic.get(t):  # key alreay exist
@@ -115,20 +124,19 @@ def xml_to_dict_rec(element, dic):
                         break
             else:
                 dic.update({t:L0.text})
-
         else:
-            dic = xml_to_dict_rec(L0, dic)      # recursive
+            # print ("sub -->", L0)
+            dic_sub = xml_to_dict(L0)      # recursive
+            dic.update(dic_sub)
+
+    return {local_name(element.tag):dic}
+
+def xml_to_dict_00(element):    # not used
+    if type(element) == list:
+        print ("Error - use One Element at a time")
+        return None 
+    dic = xml_to_dict(element)
     return dic
-
-def xml_to_dict(element, ns):
-    if ns:      # file has name space
-        dic = {local_name(element.tag):element.text}
-    else:
-        # dic = {element.tag:element.text}
-        dic = {}
-    dic = xml_to_dict_rec(element, dic)
-
-    return dic 
 
 
 def xml_to_dict_0(element):
