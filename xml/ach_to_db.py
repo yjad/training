@@ -2,6 +2,7 @@ import os
 import xml.etree.ElementTree as ET 
 from lxml import etree
 import re
+from xml_read import print_xml_sample
 
 from DB import insert_row_dict, open_db, close_db, exec_db_cmd, query_to_list, OUT_FOLDER, \
     print_tk, clear_tk, print_query, trim, query_to_dict_list, query_to_excel
@@ -24,89 +25,199 @@ def load_ACH():
     
     # file_name = r"C:\Yahia\HDB\HDB-CBP\3- Execution\Interfaces\IRDs\ACH\0002\booking\ACH sample\29_4003076817_BOOKING_8034_1.xml"
     # file_name = r"C:\Yahia\Home\Yahia-Dev\Python\training\xml\ACH\29_PACS008_2021080309241818109.XML"
-    file_name = r"C:\Yahia\Python\src\HDB\training\xml\ACH\29_PACS008_2021080309241818109.XML"
-    parse_pacs_file(file_name)
+    # file_name = r"C:\Yahia\Home\Yahia-Dev\Python\training\xml\ACH\29_PACS008_2021080309241818109.XML"
+    file_name = r"C:\Yahia\Home\Yahia-Dev\Python\training\xml\ACH\29_PACS008_20160802191205682107.xml"
     
-
+    data_folder = r"C:\Yahia\Home\Yahia-Dev\Python\training\xml\ACH"
+    
+    conn, cursor = open_db()
+    exec_db_cmd('delete from GrpHdr')
+    exec_db_cmd('delete from trx')
+    exec_db_cmd('delete from pacs_004')
+    # parse_pacs_file(file_name, conn, cursor)
+    for folder, subs, files in os.walk(data_folder):
+        for f in files:
+            filename, file_extension = os.path.splitext(f)
+            if file_extension.upper() != ".XML":
+                continue
+                
+            parse_pacs_file(os.path.join(os.path.join(folder, f)), conn, cursor)
+    
+    conn.commit()
+    close_db(cursor)
+    
+    
 def local_name(tag_text):
     return etree.QName(tag_text).localname
     
     
-def parse_pacs_file(file_name):
+def parse_pacs_file(file_name, conn, cursor):
     
     tree = ET.parse(file_name) 
-
     root = tree.getroot()
-    conn, cursor = open_db()
+    # print (file_name)
+    print_xml_sample(root,10,"trx.txt")
+    
     
     ns = get_ns(root)
-      
+    pacs_type = ns[37:47]   # 004.001.01
+    
+    # if pacs_type == '008.001.01':
+        # print ('rejection record, skip it: ', file_name, ns)
+        # return 
+    # print (file_name)
+    print (file_name, pacs_type)
+    # return 
+    
     if ns:
         grp_header = root[0].find(f"./{ns}GrpHdr")
     else:
         grp_header = root.find(f"./{ns}GrpHdr")
 
     # print (xml_to_dict(grp_header))
-    exec_db_cmd('delete from GrpHdr')
-    exec_db_cmd('delete from trx')
-    rec = load_ach_GrpHdr(grp_header)
+ 
+    rec = load_ach_GrpHdr(pacs_type, grp_header)
 
     insert_row_dict(conn, cursor, "GrpHdr", rec)
-
-    msg_id = rec.get('MsgId')
-    trans_grp_tag = "CdtTrfTxInf"
-    trxs = root[0].findall(f"./{ns}{trans_grp_tag}")
-    for trx in trxs:
-        rec_0 = load_CdtTrfTxInf(trx, msg_id)
-        print (rec)
-        rec = { 'MsgId': msg_id}
-        rec.update(rec_0)
-        insert_row_dict(conn, cursor, "trx", rec)
-                
-
-    conn.commit()
-    close_db(cursor)
     
+    if pacs_type in ["002.001.01", "004.001.01"]:
+        load_pacs_004_trx(root, conn, cursor, ns, rec.get('MsgId'))
+        
+    elif pacs_type == "008.001.01":  
+        load_pacs_008_trx(root, conn, cursor, ns, rec.get('MsgId'))
+        
+        
+def load_pacs_008_trx(root, conn, cursor, ns, msg_id):
+        
+        trans_grp_tag = "CdtTrfTxInf"
+        trxs = root[0].findall(f"./{ns}{trans_grp_tag}")
+        for trx in trxs:
+            rec_0 = load_CdtTrfTxInf(trx, msg_id)
+            # print (rec)
+            rec = { 'MsgId': msg_id}
+            rec.update(rec_0)
+            insert_row_dict(conn, cursor, "trx", rec)
+                    
     
-def load_ach_GrpHdr(xml_item):   
+def load_ach_GrpHdr(pacs_type, xml_item):   
     
     rec = xml_to_dict(xml_item).get('GrpHdr')    
-    grp_header = {'MsgId':rec.get('MsgId'),
+    SttlmMtd =  rec.get('SttlmInf')
+    if SttlmMtd: SttlmMtd = SttlmMtd.get('SttlmMtd') 
+    
+    ClrSysId =  rec.get('SttlmInf')
+    if ClrSysId: ClrSysId = ClrSysId.get('ClrSys')
+    if ClrSysId:  ClrSysId = ClrSysId.get('ClrSysId', '')
+
+    InstrPrty = rec.get('PmtTpInf')
+    if InstrPrty: InstrPrty = InstrPrty.get('InstrPrty', '')
+     
+    ClrChanl = rec.get('PmtTpInf')
+    if ClrChanl: ClrChanl = ClrChanl.get('ClrChanl', '')
+     
+    CtgyPurp = rec.get('PmtTpInf')
+    if CtgyPurp: CtgyPurp = CtgyPurp.get('CtgyPurp', '')
+    
+    grp_header = {'pacs_type': pacs_type,
+    'MsgId':rec.get('MsgId'),
     'CreDtTm':rec.get('CreDtTm'),
     'NbOfTxs': rec.get('NbOfTxs'),
     'TtlIntrBkSttlmAmt': rec.get('TtlIntrBkSttlmAmt'),
     # 'TtlIntrBkSttlmCcy': rec.get('TtlIntrBkSttlmAmt'),
     'IntrBkSttlmDt': rec.get('IntrBkSttlmDt'),
-    'SttlmMtd': rec.get('SttlmInf').get('SttlmMtd'),
-    'ClrSysId': rec['SttlmInf']['ClrSys']['ClrSysId'],
-    'InstrPrty': rec.get('PmtTpInf').get('InstrPrty'),
-    'ClrChanl': rec.get('PmtTpInf').get('ClrChanl'),
-    'CtgyPurp': rec.get('PmtTpInf').get('CtgyPurp')
+    'SttlmMtd': SttlmMtd,
+    'ClrSysId': ClrSysId,
+    'InstrPrty': InstrPrty,
+    'ClrChanl': ClrChanl,
+    'CtgyPurp': CtgyPurp
     }
     return grp_header
 
 def load_CdtTrfTxInf(xml_item, msg_id):   
     
     rec = xml_to_dict(xml_item).get('CdtTrfTxInf')  
+    DbtrAgtBrnchId = rec['DbtrAgt'].get('BrnchId','')
+    if type(DbtrAgtBrnchId) != str: # case debitor has no branch number
+        DbtrAgtBrnchId = DbtrAgtBrnchId.get('Id', '')
+        
+    CdtrAcctTp= rec['CdtrAcct'].get('Tp', '')
+    CdtrAcctTp = CdtrAcctTp.get('Cd') if type (CdtrAcctTp) != str else ''
+    Purp = rec.get('Purp', '')
+    Purp = Purp.get('Cd') if type (Purp) != str else ''
     trx_rec_dict = {
     'MsgId':msg_id,
     'InstrId':rec['PmtId'].get('InstrId'),
     'EndToEndId':rec['PmtId'].get('EndToEndId'),
-    'IntrBkSttlmAmt':rec.get('IntrBkSttlmAmt'),
+    'TxId':rec['PmtId'].get('TxId'),
+        'IntrBkSttlmAmt':rec.get('IntrBkSttlmAmt'),
     'IntrBkSttlmCcy':'TBD',
     'ChrgBr':rec.get('ChrgBr'),
     'DbtrNm':rec['Dbtr'].get('Nm'),
     'DbtrAcctId':rec['DbtrAcct']['Id']['PrtryAcct'].get('Id'),
     'DbtrAgtBIC':rec['DbtrAgt']['FinInstnId'].get('BIC'),
-    'CdtrAgtBrnchId':rec['DbtrAgt']['BrnchId'].get('Id'),
+    'DbtrAgtBrnchId':DbtrAgtBrnchId,
+    'CdtrAgtBIC':rec['CdtrAgt']['FinInstnId'].get('BIC'),
+    'CdtrAgtBrnchId':rec['CdtrAgt']['BrnchId'].get('Id'),
     'CdtrNm': rec['Cdtr'].get('Nm'),
     'CdtrAcctId': rec['CdtrAcct']['Id']['PrtryAcct'].get('Id'),
-    'CdtrAcctTp': rec['CdtrAcct']['Tp'].get('Cd'),
-    'Purp': rec['Purp'].get('Cd'),
+    'CdtrAcctTp': CdtrAcctTp,
+    'Purp': Purp,
     'RmtInfUstrd': rec['RmtInf'].get('Ustrd')
     }
     return trx_rec_dict
 
+def load_pacs_004_trx(root, conn, cursor, ns, msg_id):
+    
+    org_grp_info = xml_to_dict(root[0].find(f"./{ns}{'OrgnlGrpInf'}")).get('OrgnlGrpInf')
+    # print ("---------> ",org_grp_info, "OrgnlMsgId:", org_grp_info.get('OrgnlMsgId'))
+    trx_info = xml_to_dict(root[0].find(f"./{ns}{'TxInf'}")).get('TxInf')
+    # print (trx_info)
+    return_reason_info = xml_to_dict(root[0].find(f".//{ns}{'RtrRsnInf'}")).get('RtrRsnInf')
+    # print ("----------->",return_reason_info)
+    # print (return_reason_info.get('RtrRsn'))
+    # rec = xml_to_dict(xml_item)
+    
+    trx_dict = {
+    'MsgId': msg_id,
+    'OrgnlMsgId': org_grp_info.get('OrgnlMsgId'),
+    'OrgnlMsgNmId': org_grp_info.get('OrgnlMsgNmId'),
+    'TrxRtrId': trx_info.get('RtrId'),
+    'OrgnlEndToEndId': trx_info.get('OrgnlEndToEndId'),
+    'OrgnlTxId': trx_info.get('OrgnlTxId'),
+    'RtrdIntrBkSttlmAmt': trx_info.get('RtrdIntrBkSttlmAmt'),
+    'RtrdIntrBkSttlmCcy': '', #trx_info.get('RtrdIntrBkSttlmCcy'),
+    'RtrRsn': return_reason_info.get('RtrRsn').get('Prtry')
+    }
+    insert_row_dict(conn, cursor, "pacs_004", trx_dict)
+    return trx_dict
+    
+def load_pacs_002_trx(root, conn, cursor, ns, msg_id):
+    
+    org_grp_info = xml_to_dict(root[0].find(f"./{ns}{'OrgnlGrpInfAndSts'}")).get('OrgnlGrpInfAndSts')
+    # print ("---------> ",org_grp_info, "OrgnlMsgId:", org_grp_info.get('OrgnlMsgId'))
+    trx_info = xml_to_dict(root[0].find(f"./{ns}{'TxInfAndSts'}")).get('TxInfAndSts')
+    # print (trx_info)
+    return_reason_info = xml_to_dict(root[0].find(f".//{ns}{'StsRsnInf'}")).get('StsRsnInf')
+    # print ("----------->",return_reason_info)
+    # print (return_reason_info.get('RtrRsn'))
+    # rec = xml_to_dict(xml_item)
+    
+    trx_dict = {
+    'MsgId': msg_id,
+    'OrgnlMsgId': org_grp_info.get('OrgnlMsgId'),
+    'OrgnlMsgNmId': org_grp_info.get('OrgnlMsgNmId'),
+    'GrpSts': org_grp_info.get('GrpSts'),
+    'TrxRtrId': trx_info.get('RtrId'),
+    'OrgnlEndToEndId': trx_info.get('OrgnlEndToEndId'),
+    'OrgnlTxId': trx_info.get('OrgnlTxId'),
+    'RtrdIntrBkSttlmAmt': trx_info.get('RtrdIntrBkSttlmAmt'),
+    'RtrdIntrBkSttlmCcy': '', #trx_info.get('RtrdIntrBkSttlmCcy'),
+    'RtrRsn': return_reason_info.get('RtrRsn').get('Prtry')
+    }
+    insert_row_dict(conn, cursor, "pacs_004", trx_dict)
+    return trx_dict
+    
+    
 def xml_to_dict(element):
 
     if type(element) == list:
@@ -121,20 +232,15 @@ def xml_to_dict(element):
         # print ("element->:", L0)
         if type(L0.text) == str:
             t = local_name(L0.tag)
-            if dic.get(t):  # key alreay exist
-                for i in range(100):
-                    if not dic.get(f"{t}_{i}"):
-                        dic.update ({f"{t}_{i}":L0.text})
-                        break
-            else:
-                dic.update({t:L0.text})
+            dic.update({t:L0.text})
         else:
-            # print ("sub -->", L0)
             dic_sub = xml_to_dict(L0)      # recursive
             dic.update(dic_sub)
 
     return {local_name(element.tag):dic}
     
+    
+
 if __name__ == '__main__':
     
     load_ACH()

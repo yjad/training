@@ -50,7 +50,7 @@ def insert_row_dict(conn, cursor, table_name, rec):
         print("Exception class is: ", er.__class__)
         print('SQLite traceback: ')
         exc_type, exc_value, exc_tb = sys.exc_info()
-        print(exc_type, exc_value, exc_tb)
+        print(exc_type, exc_value, exc_tb, "\n", "table: ", table_name, "--", rec)
         # print(traceback.format_exception(exc_type, exc_value, exc_tb))
         return -1
 
