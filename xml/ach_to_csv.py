@@ -26,7 +26,7 @@ def load_ACH():
     # file_name = r"C:\Yahia\HDB\HDB-CBP\3- Execution\Interfaces\IRDs\ACH\0002\booking\ACH sample\29_4003076817_BOOKING_8034_1.xml"
     # file_name = r"C:\Yahia\Home\Yahia-Dev\Python\training\xml\ACH\29_PACS008_2021080309241818109.XML"
     # file_name = r"C:\Yahia\Home\Yahia-Dev\Python\training\xml\ACH\29_PACS008_2021080309241818109.XML"
-    file_name = r"C:\Yahia\Home\Yahia-Dev\Python\training\xml\ACH\29_PACS008_20160802191205682107.xml"
+    file_name = r"C:\Yahia\Home\Yahia-Dev\Python\training\xml\ACH\tttt\29_PACS008_2021080811485962830.XML"
     
     data_folder = r"C:\Yahia\Home\Yahia-Dev\Python\training\xml\ACH"
     fexception = open (r".\out\exceptions.txt", "wt", encoding = "UTF8")
@@ -35,15 +35,17 @@ def load_ACH():
     exec_db_cmd('delete from GrpHdr')
     exec_db_cmd('delete from trx')
     exec_db_cmd('delete from pacs_002_004')
-    # parse_pacs_file(file_name, conn, cursor)
-    for folder, subs, files in os.walk(data_folder):
-        for f in files:
-            filename, file_extension = os.path.splitext(f)
-            if file_extension.upper() != ".XML":
-                continue
-                
-            parse_pacs_file(os.path.join(os.path.join(folder, f)), conn, cursor, fexception)
-    
+    if True:
+        parse_pacs_file(file_name, conn, cursor, fexception)
+    else:
+        for folder, subs, files in os.walk(data_folder):
+            for f in files:
+                filename, file_extension = os.path.splitext(f)
+                if file_extension.upper() != ".XML":
+                    continue
+                    
+                parse_pacs_file(os.path.join(os.path.join(folder, f)), conn, cursor, fexception)
+        
     conn.commit()
     close_db(cursor)
     
@@ -109,7 +111,7 @@ def load_pacs_008_trx(root, conn, cursor, ns, msg_id, fexception):
             ret_code = insert_row_dict(conn, cursor, "trx", rec)
             if ret_code == -1:
                  fexception.writelines(f"Error inserting trx record: {str(rec)}\n {50*'-'}\n")
-                    
+            
     
 def load_ach_GrpHdr(pacs_type, xml_item):   
     
@@ -148,13 +150,14 @@ def load_ach_GrpHdr(pacs_type, xml_item):
 def load_CdtTrfTxInf(xml_item, msg_id):   
     
     rec = xml_to_dict(xml_item).get('CdtTrfTxInf')  
+    print (rec)
     DbtrAgtBrnchId = rec['DbtrAgt'].get('BrnchId','')
     if type(DbtrAgtBrnchId) != str: # case debitor has no branch number
         DbtrAgtBrnchId = DbtrAgtBrnchId.get('Id', '')
         
     CdtrAcctTp= rec['CdtrAcct'].get('Tp', '')
     CdtrAcctTp = CdtrAcctTp.get('Cd') if type (CdtrAcctTp) != str else ''
-    Purp = rec.get('Purp', '')
+    Purp = rec.get('Purp')
     Purp = Purp.get('Cd') if type (Purp) != str else ''
     trx_rec_dict = {
     'MsgId':msg_id,
@@ -181,6 +184,7 @@ def load_CdtTrfTxInf(xml_item, msg_id):
 def load_pacs_004_trx(root, conn, cursor, ns, msg_id, fexception):
     
     org_grp_info = xml_to_dict(root[0].find(f"./{ns}{'OrgnlGrpInf'}")).get('OrgnlGrpInf')
+
     # print ("---------> ",org_grp_info, "OrgnlMsgId:", org_grp_info.get('OrgnlMsgId'))
     trx_info = xml_to_dict(root[0].find(f"./{ns}{'TxInf'}")).get('TxInf')
     # print (trx_info)
@@ -279,7 +283,30 @@ def xml_to_dict(element):
 
     return {local_name(element.tag):dic}
     
-    
+def xml_to_one_level_dict(element, ol_tag = ''):
+
+    if type(element) == list:
+        print ("Error - use One Element at a time")
+        return None 
+    elif element is None:
+        print ("Error - element is None")
+        return None
+
+    dic = {}
+    ol_tag = ''
+    for L0 in element:
+        # print ("element->:", L0)
+        if type(L0.text) == str:
+            t = local_name(L0.tag)
+            dic.update({t:L0.text})
+            if len(ol_tag) > 0: ol_tag += "." 
+            ol_tag = ol_tag + t + ","
+        else:
+            dic_sub, ol_tag_sub = xml_to_dict(L0, ol_tag)      # recursive
+            dic.update(dic_sub)
+            ol_tag = ol_tag + "," + ol_tag_sub
+
+    return {local_name(element.tag):dic}
 
 if __name__ == '__main__':
     
