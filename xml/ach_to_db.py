@@ -26,7 +26,7 @@ def load_ACH():
     # file_name = r"C:\Yahia\HDB\HDB-CBP\3- Execution\Interfaces\IRDs\ACH\0002\booking\ACH sample\29_4003076817_BOOKING_8034_1.xml"
     # file_name = r"C:\Yahia\Home\Yahia-Dev\Python\training\xml\ACH\29_PACS008_2021080309241818109.XML"
     # file_name = r"C:\Yahia\Home\Yahia-Dev\Python\training\xml\ACH\29_PACS008_2021080309241818109.XML"
-    file_name = r"C:\Yahia\Home\Yahia-Dev\Python\training\xml\ACH\29_PACS008_20160802191205682107.xml"
+    file_name = r"C:\Yahia\Home\Yahia-Dev\Python\training\xml\ACH\tttt\29_PACS002_2021080108055236720.XML"
     
     data_folder = r"C:\Yahia\Home\Yahia-Dev\Python\training\xml\ACH"
     fexception = open (r".\out\exceptions.txt", "wt", encoding = "UTF8")
@@ -35,7 +35,8 @@ def load_ACH():
     exec_db_cmd('delete from GrpHdr')
     exec_db_cmd('delete from trx')
     exec_db_cmd('delete from pacs_002_004')
-    # parse_pacs_file(file_name, conn, cursor)
+    parse_pacs_file(file_name, conn, cursor, fexception)
+    return 
     for folder, subs, files in os.walk(data_folder):
         for f in files:
             filename, file_extension = os.path.splitext(f)
@@ -57,6 +58,7 @@ def parse_pacs_file(file_name, conn, cursor, fexception):
     
     tree = ET.parse(file_name) 
     root = tree.getroot()
+    print (root[0].tag)
     
     # print (file_name)
     # print_xml_sample(root,10,"trx.txt")
@@ -280,6 +282,30 @@ def xml_to_dict(element):
     return {local_name(element.tag):dic}
     
     
+def dict_to_1L_dict(rec, parent=''):
+    dic = {}
+    
+    for L0 in rec.items():
+        
+        # print (L0, L0[0], type (L0))
+        
+        if type(L0[1]) == str:
+            if parent:
+                L0_dict = {parent + '.'+ L0[0] :L0[1]}
+            else:
+                L0_dict = {L0[0] :L0[1]}
+            # print (L0_dict)
+            dic.update(L0_dict)
+        else:
+            if parent:
+                parent_s = parent + '.' + list(L0)[0] 
+            else:
+                parent_s = list(L0)[0]
+            dic_sub = dict_to_1L_dict(L0[1], parent_s)      # recursive
+            
+            dic.update(dic_sub)
+            # print ("-----------", dic)
+    return dic
 
 if __name__ == '__main__':
     
