@@ -101,16 +101,16 @@ def parse_pacs_file(file_name, conn, cursor, fexception):
         
 def load_pacs_008_trx(root, conn, cursor, ns, msg_id, fexception):
         
-        trans_grp_tag = "CdtTrfTxInf"
-        trxs = root[0].findall(f"./{ns}{trans_grp_tag}")
-        for trx in trxs:
-            rec_0 = load_CdtTrfTxInf(trx, msg_id)
-            # print (rec)
-            rec = { 'MsgId': msg_id}
-            rec.update(rec_0)
-            ret_code = insert_row_dict(conn, cursor, "trx", rec)
-            if ret_code == -1:
-                 fexception.writelines(f"Error inserting trx record: {str(rec)}\n {50*'-'}\n")
+    trans_grp_tag = "CdtTrfTxInf"
+    trxs = root[0].findall(f"./{ns}{trans_grp_tag}")
+    for trx in trxs:
+        rec_0 = load_CdtTrfTxInf(trx, msg_id)
+        # print (rec)
+        rec = { 'MsgId': msg_id}
+        rec.update(rec_0)
+        ret_code = insert_row_dict(conn, cursor, "trx", rec)
+        if ret_code == -1:
+                fexception.writelines(f"Error inserting trx record: {str(rec)}\n {50*'-'}\n")
                     
     
 def load_ach_GrpHdr(pacs_type, xml_item):   
