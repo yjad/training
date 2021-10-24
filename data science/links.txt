@@ -1,0 +1,3 @@
+https://www.bing.com/videos/search?q=data+science+courses&docid=608029908783338941&mid=7AC7C328F985D19869F67AC7C328F985D19869F6&view=detail&FORM=VIRE
+
+https://jakevdp.github.io/PythonDataScienceHandbook/ 
