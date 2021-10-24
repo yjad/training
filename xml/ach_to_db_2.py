@@ -2,6 +2,7 @@ import os, json
 from sqlite3.dbapi2 import Cursor
 import xml.etree.ElementTree as ET 
 from lxml import etree
+import re
 from tkinter import filedialog
 from DB import exec_query, insert_row_dict, open_db, close_db, exec_db_cmd, query_to_list, OUT_FOLDER, \
     print_tk, clear_tk, print_query, trim, query_to_dict_list, query_to_excel
@@ -44,11 +45,13 @@ def xml_to_sqlite(file_name):
     # f = open (".\\out\\parse_xml.txt", 'w', encoding = "UTF8")
     conn, cursor = open_db()
 
-    for L0 in root:
+    for i,L0 in enumerate(root):
         
         # f.writelines (f"====== L0: {local_name(L0.tag)} {len(L0)} ===============\n")
+        print (f"{i} - len(L0): {len(L0)}, {local_name(L0.tag)}")
         for L1 in L0:
             L1_rec = dict_to_1L_dict(xml_to_dict(L1))
+           
             if L1_rec: 
                 if local_name(L1.tag) == "GrpHdr":
                     table_name = 'GrpHdr'
@@ -68,13 +71,11 @@ def xml_to_sqlite(file_name):
     # f.close()
 
 
-
-    
-
 def table_exists(table_name, cursor):
     cmd  = f"SELECT 1 FROM sqlite_master WHERE type = 'table' AND name= '{table_name}'"
     row = exec_query(cursor, cmd)
     return len(row) # new table
+
 
 def insert_db_rec(conn, cursor, rec, table):
     
