@@ -8,3 +8,5 @@ T24Iskan/data/
 **/*.csv
 **/*.7z
 xml/ACH
+**/**.rar
+xml/performance
