@@ -11,3 +11,5 @@ xml/ACH
 **/**.rar
 xml/performance
 xml/data/SystemLog/*
+/data science/disney-data-science-tasks-master/data
+/data science/disney-data-science-tasks-master/.ipynb_checkpoints

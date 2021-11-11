@@ -1,2 +1,0 @@
-cd > xx.txt
-pause 
