@@ -4,7 +4,7 @@ import tkinter.font
 from tkinter import ttk
 from tkinter.scrolledtext import ScrolledText
 
-import pyperclip
+# import pyperclip
 from PIL import Image, ImageTk
 
 from pdf_db import (get_db_page, get_page_dict, rebuild_page_text,
