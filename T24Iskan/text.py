@@ -7,11 +7,10 @@ import csv
 correct = 0
 corrupted = 0
 
-
-for f in os.listdir(".\\data\CUSTOMER"):
-    # print (f)
-    # fname = pathlib.Path(os.path.join(".\\data", f))
-    fname = pathlib.Path(os.path.join(".\\data\\CUSTOMER", f))
+FOLDER = r"C:\Yahia\Home\Yahia-Dev\Python\training\T24Iskan\data\T24_Customers_Nov14"
+for f in os.listdir(FOLDER):
+    print (f)
+    fname = pathlib.Path(os.path.join(FOLDER, f))
     ctime = datetime.datetime.fromtimestamp(fname.stat().st_ctime)
     mtime = datetime.datetime.fromtimestamp(fname.stat().st_mtime)
     try:
