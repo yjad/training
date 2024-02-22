@@ -1,3 +1,4 @@
+import streamlit as st
 from PIL import Image
 import pytesseract
 import sys
@@ -83,29 +84,40 @@ def all():
     
 def img2text ():
     
-    text_path = r".\data\books\{book_folder}\text"
-    page = r"C:\Yahia\Home\Yahia-Dev\Python\training\pdf\data\ABH pages\ABH-025.png"
+    uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"])
+    if uploaded_file is not None:
+
+    # text_path = r".\data\books\{book_folder}\text"
+    # page = r"C:\Yahia\Python\training\pdf\data\books\ABH\pages\ABH-025.png"
+    # page = r"C:\Users\yahia\Downloads\page1.png"
     # for p in range(frrom_page,to_page+1):
     #     outfile = os.path.join(text_path, f".\\out\\{os.path.split(page)[1].split('.')[0]}.txt"
 
-    f = open(outfile, "w", encoding='utf-8')
+    # f = open(outfile, "w", encoding='utf-8')
     # filename = "page_"+str(i)+".jpg"
-    filename = f'.\\data\\ABH pages\\{page}'
+    # filename = f'.\\data\\ABH pages\\{page}'
     # text = str(((pytesseract.image_to_string(Image.open(filename), lang='ara'))))
-    words= str(((pytesseract.image_to_string(Image.open(page), lang='ara'))))
-    # print(words)
-    f.write(words)
-    f.write ('----------------------------\n')
-    for w in words.split():
-        f.write(w + "\n")
-    f.close()
-    conn, cursor = open_db()
-    # print(words)
-    for w in words.split():
-        # print (w)
-        insert_row_list(conn, cursor, 'pdf_dict', [w,w], ignoreUnique=True)
+        words= str(((pytesseract.image_to_string(Image.open(uploaded_file), lang='ara'))))
+        col1, col2 = st.columns(2)
+        img = Image.open(uploaded_file) 
+        col1.image(img, clamp=True, channels="RGB")
+
+        # col1.image(Image.open(page))
+    # col2.write(words)
+        col2.text_area("Text", value = words, height=800)
+    # f.write(words)
+    # st.write ('----------------------------')
+    # st.dataframe(words.split())
+    # for w in words.split():
+    #     f.write(w + "\n")
+    # f.close()
+    # conn, cursor = open_db()
+    # # print(words)
+    # for w in words.split():
+    #     # print (w)
+    #     insert_row_list(conn, cursor, 'pdf_dict', [w,w], ignoreUnique=True)
     
-    conn.commit()
-    close_db(cursor)
+    # conn.commit()
+    # close_db(cursor)
      
-# img2text()
+img2text()

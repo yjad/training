@@ -1,11 +1,12 @@
-import tkinter as tk
-from tkinter import ttk
-import pytesseract
+# import tkinter as tk
+# from tkinter import ttk
+import streamlit as st
+# import pytesseract
 from edit_ocr import review_page, GetFromTo
 from pdf_db import update_book
 
 
-
+"""
 def run_menu():
     root = tk.Tk()
     #root.attributes('-fullscreen', True)
@@ -34,14 +35,27 @@ def run_menu():
         
     root.mainloop()
 
+"""
+
+def run_menu():
+    st.header ("pdf to text")
+    st.sidebar.multiselect("Options: ")
+
 def run_load_book_pages(root):
     app= GetFromTo(root)
     from_page, to_page = app.go_command()
     print (from_page, to_page)
 
+ld_options={'<Select ...>':None, 
+        '1. Load book pages':run_load_book_pages,
+        "2. Edit Pages": GetFromTo,
+        "3. Review Pages": review_page,
+        "4. Update Book words": update_book,
+}
 
-if __name__ == '__main__':
-    run_menu()
+rep_opt = st.sidebar.selectbox("Load Data Options:",ld_options.keys())
+if ld_options[rep_opt]:
+    ld_options[rep_opt]()
 
 
 
