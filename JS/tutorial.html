@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h2>What can JavaScript Do?</h2>
+    <p id="demo">Unchanged text</p>
+    <button type="button" onclick="document.getElementById('demo').innerHTML='Hello from JSript'">
+        Click Here!
+    </button>
+
+
+    <p>JavaScript can change HTML attribute values.</p>
+
+    <p>In this case JavaScript changes the value of the src (source) attribute of an image.</p>
+
+    <button onclick="document.getElementById('myImage').src='images/bulb on.jpeg'">Turn on the light</button>
+
+    <img id="myImage" src="images/bulb off.jpeg" style="width:100px">
+
+    <button onclick="document.getElementById('myImage').src='images/bulb off.jpeg'">Turn off the light</button>
+    <br> <br>
+    <button type="button" onclick="document.getElementById('demo').style.fontSize='35px'">Change CSS</button>
+
+    <p>JavaScript can show hidden HTML elements.</p>
+    
+    <p id="demo2" style="display:none">Hello JavaScript!</p>
+    
+    <button type="button" onclick="document.getElementById('demo2').style.display='block'">Show Hidden Text</button>
+
+    <div>
+        <h1>JavaScript HTML Events</h1>
+        <h2>The onclick Attribute</h2>
+    
+        <button onclick="document.getElementById('demo3').innerHTML=Date()">The time is?</button>
+    
+        <p id="demo3"></p>
+    </div>
+</body>
+</html>

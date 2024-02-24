@@ -1,30 +1,80 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <title>Jasvascript Tarot Deck</title>
-    <!-- <link rel="stylesheet" href="styles/tarot.css">
-    <meta charset="UTF-8"> -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link
-    href="https://fonts.googleapis.com/css?family=Merienda" rel="stylesheet">
 
-</head>
-<body>
-    <div id=<"container">
-        <h1>Date Compare</h1>
-        <div id="display">
-        <form id="form">
-            <input type="date" name="From:" id="from_date">
-            <br>
-            <input type="date" name="To:" id="to_date">
-            <br>
-            <button onclick="compareDates()">Compare</button>
+<form name="myForm" onsubmit="return validateForm()" >
+    <h1>Form Validation</h1>
+    <p id="message"></p>
+    <label for="from_dt">
+        From Date : 
+    </label>
+    <input type="date" name="From:" id="from_date">
+    <span class="error" aria-live="polite"></span>
+    <br>
+    <label for="to_date">
+        To Date :
+    </label>
+    <input type="date" name="To:" id="to_date">
+    <br>
+    <input type="submit" value="Submit">
 
-        </form>
-        </div>
-    </div>
-    <script=
-    src="scripts/validate_from_to.js"></script>
-</body>
-</html>
+    <!-- <button>Submit</button> -->
+
+</form>
+<script>
+    // const form = document.querySelector("form");
+    // const FROM = document.getElementById("from_date").value;
+    // const TO = document.getElementById("to_date").value;
+    const from_dateError = document.querySelector("#from_date + span.error");
+
+    // console.log("Hi There before...");
+    // form.addEventListener("submit", (event) => {
+    //     console.log("submit ....");
+    //     if (FROM > TO) {
+    //         // form.setCustomValidity("Form > To");
+    //         console.log("FROM > TO ...");
+    //         // windows.alert("Invalidate from/to dates");
+    //         from_dateError.textContent = "FROM > TO ...";
+    //         from_dateError.className = "error active";
+    //         event.preventDefault();
+    //     } else {
+    //         // windows.alert("Invalidate from/to dates");
+    //         form.setCustomValidity("");
+    //         console.log("Form Validation OK")
+    //         windows.alert("Form Validation OK");
+    //         from_dateError.textContent = "Form Validation OK"; // Reset the content of the message
+    //         from_dateError.className = "error"; // Reset the visual state of the message
+    //     }
+    // });
+    // console.log("Hi There end ...");
+    // showError();
+
+    function showError() {
+       
+        from_dateError.textContent = "Error Date Range"
+        // Set the styling appropriately
+        from_dateError.className = "error active";
+    }
+
+    function compareDates() {
+        const FROM = document.getElementById("from_date").value;
+        const TO = document.getElementById("to_date").value;
+        console.log("from CompareDates...");
+        if (FROM > TO) {
+            document.getElementById('message').innerHTML="Error Date Range";
+        }else{
+            document.getElementById('message').innerHTML = "Valid Date Range";
+        }
+        // return (FROM > TO)
+    }
+
+    function validateForm() {
+        let FROM = document.forms["myForm"]["from_date"].value;
+        let TO = document.forms["myForm"]["to_date"].value;
+
+        if (FROM > TO) {
+            showError()
+            return false;       // stop sending the form
+        } else {
+            return true;        // validation OK
+        }
+    }
+</script>
+
