@@ -1,28 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FormVal</title>
+</head>
+<body>
+    <form name="myForm" action="">
+    <!-- <form name="myForm" action="" onsubmit="return validateForm()"> -->
+        <h1>Form Validation</h1>
+        <p id="message"></p>
+        <label for="from_dt">
+            From Date :
+        </label>
+        <input type="date" name="From:" id="from_date">
+        <span class="error" aria-live="polite"></span>
+        <br>
+        <label for="to_date">
+            To Date :
+        </label>
+        <input type="date" name="To:" id="to_date">
+        <br>
+        <input type="submit" value="Submit" onclick="return validateForm()">
+        <!-- <input type="submit" value="Submit"> -->
+    
+    </form>
+    
+</body>
+    
+</html>
+<script src="scripts\validate_form.js"></script>
 
-<form name="myForm" onsubmit="return validateForm()" action="">
-    <h1>Form Validation</h1>
-    <p id="message"></p>
-    <label for="from_dt">
-        From Date : 
-    </label>
-    <input type="date" name="From:" id="from_date">
-    <span class="error" aria-live="polite"></span>
-    <br>
-    <label for="to_date">
-        To Date :
-    </label>
-    <input type="date" name="To:" id="to_date">
-    <br>
-    <input type="submit" value="Submit">
-
-    <!-- <button>Submit</button> -->
-
-</form>
 <script>
+    //<form name="myForm" onsubmit="return validateForm()" action=""> -->
+
+
     // const form = document.querySelector("form");
     // const FROM = document.getElementById("from_date").value;
     // const TO = document.getElementById("to_date").value;
-    const from_dateError = document.querySelector("#from_date + span.error");
+    // const from_dateError = document.querySelector("#from_date + span.error");
 
     // console.log("Hi There before...");
     // form.addEventListener("submit", (event) => {
@@ -46,35 +62,37 @@
     // console.log("Hi There end ...");
     // showError();
 
-    function showError() {
+    // function showError() {
        
-        from_dateError.textContent = "Error Date Range"
-        // Set the styling appropriately
-        from_dateError.className = "error active";
-    }
+    //     from_dateError.textContent = "Error Date Range"
+    //     // Set the styling appropriately
+    //     from_dateError.className = "error active";
+    // }
 
-    function compareDates() {
-        const FROM = document.getElementById("from_date").value;
-        const TO = document.getElementById("to_date").value;
-        console.log("from CompareDates...");
-        if (FROM > TO) {
-            document.getElementById('message').innerHTML="Error Date Range";
-        }else{
-            document.getElementById('message').innerHTML = "Valid Date Range";
-        }
-        // return (FROM > TO)
-    }
+    // function compareDates(FROM, TO) {
+    //     // const FROM = document.getElementById("from_date").value; 
+    //     // const TO = document.getElementById("to_date").value; -->
+    //     console.log("from CompareDates...");
+    //     if (FROM > TO) {
+    //         document.getElementById('message').innerHTML="Error Date Range";
+    //     }else{
+    //         document.getElementById('message').innerHTML = "Valid Date Range";
+    //     }
+    //     return (FROM > TO)
+    // }
 
-    function validateForm() {
-        let FROM = document.forms["myForm"]["from_date"].value;
-        let TO = document.forms["myForm"]["to_date"].value;
+    // function validateForm() {
+    //     let FROM = document.forms["myForm"]["from_date"].value;
+    //     let TO = document.forms["myForm"]["to_date"].value;
 
-        if (FROM > TO) {
-            showError()
-            return false;       // stop sending the form
-        } else {
-            return true;        // validation OK
-        }
-    }
+    //     // if (FROM > TO) {
+	// 	if (compareDates(FROM, TO)){
+    //         showError()
+    //         // windows.alert("Invalidate from/to dates");
+    //         return false;       // stop sending the form
+    //     } else {
+    //         return true;        // validation OK
+    //     }
+    // }
 </script>
 
