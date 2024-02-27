@@ -1,3 +1,11 @@
+const form = document.querySelector("form");
+form.addEventListener("submit", (event) => {
+    console.log("submit ....");
+    if (!validateForm()){
+        event.preventDefault(); // stop the form processing
+    }
+    // return false;
+});
 
 function compareDates(FROM, TO) {
     console.log("from CompareDates...");
