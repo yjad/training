@@ -1,11 +1,16 @@
 const form = document.querySelector("form");
-form.addEventListener("submit", (event) => {
-    console.log("submit ....");
-    if (!validateForm()){
+const form_title = document.getElementsByClassName('panel-title')[0].innerHTML;
+console.log("form title: "+form_title);
+
+    form.addEventListener("submit", (event) => {
+        console.log("submit ....");
+        if (!validateForm(form_title)){
+            event.preventDefault(); // stop the form processing
+        }
         event.preventDefault(); // stop the form processing
-    }
-    // return false;
-});
+    });
+    
+// }
 
 function compareDates(FROM, TO) {
     console.log("from CompareDates...");
@@ -27,14 +32,24 @@ function showError() {
 }
 
 
-function validateForm() {
-    let FROM = document.forms["myForm"]["from_date"].value;
-    let TO = document.forms["myForm"]["to_date"].value;
-    if (compareDates(FROM, TO)){
-        showError()
-        return false;       // stop sending the form
-    } else {
-        return true;        // validation OK
+function validateForm(form_title) {
+    switch(forn_title) {
+        case "Add Courses Per Cycle":
+            let FROM = document.forms["myForm"]["from_date"].value;
+            let TO = document.forms["myForm"]["to_date"].value;
+            if (compareDates(FROM, TO)){
+                showError()
+                return false;       // stop sending the form
+            } else {
+                return true;        // validation OK
+            }
+            break;
+        // case y:
+            // code block
+            // break;
+        // default:
+            // code block
     }
+    
 }
   
